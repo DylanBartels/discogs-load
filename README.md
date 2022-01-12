@@ -1,15 +1,10 @@
 # Discogs-load
 
-A Rust application that inserts [Discogs data dumps](discogs-data) into Postgres.
+A Rust application that inserts [Discogs data dumps](http://www.discogs.com/data/) into Postgres.
 
-Discogs-load uses a simple [state machine](state-machine) with the quick-xml Rust library to parse the monthly data dump of discogs and load it into postgres. At moment of writing the largest file of the monthly dump is ~10 gb compressed and takes ~20 minutes to parse and load on a mac air m1.
+Discogs-load uses a simple [state machine](https://en.wikipedia.org/wiki/Finite-state_machine) with the quick-xml Rust library to parse the monthly data dump of discogs and load it into postgres. At moment of writing the largest file of the monthly dump is ~10 gb compressed and takes ~20 minutes to parse and load on a mac air m1.
 
-Inspired by [discogs-xml2db](discogs-xml2db) and [discogs2pg](discogs2pg).
-
-[discogs-data]: http://www.discogs.com/data/
-[state-machine]: https://en.wikipedia.org/wiki/Finite-state_machine
-[discogs-xml2db]: https://github.com/philipmat/discogs-xml2db
-[discogs2pg]: https://github.com/alvare/discogs2pg
+Inspired by [discogs-xml2db](https://github.com/philipmat/discogs-xml2db) and [discogs2pg](https://github.com/alvare/discogs2pg).
 
 # Installation
 
