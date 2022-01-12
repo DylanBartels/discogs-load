@@ -11,3 +11,6 @@ Cargo.lock
 
 # General vscode debugging
 .vscode
+
+# General
+.DS_store
