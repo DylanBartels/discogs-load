@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<releases>
+   <release id="8" status="Accepted">
+      <images>
+         <image type="primary" uri="" uri150="" width="410" height="401" />
+         <image type="secondary" uri="" uri150="" width="424" height="425" />
+      </images>
+      <artists>
+         <artist>
+            <id>29</id>
+            <name>Sweet Abraham</name>
+            <anv />
+            <join />
+            <role />
+            <tracks />
+         </artist>
+      </artists>
+      <title>Spreading Outward EP</title>
+      <labels>
+         <label name="Deep4Life" catno="D4L12004" id="9" />
+      </labels>
+      <extraartists>
+         <artist>
+            <id>506563</id>
+            <name>Jeff Peacock</name>
+            <anv>Jeffrey Peacock</anv>
+            <join />
+            <role>Written-By, Producer, Arranged By</role>
+            <tracks />
+         </artist>
+      </extraartists>
+      <formats>
+         <format name="Vinyl" qty="1" text="">
+            <descriptions>
+               <description>12"</description>
+               <description>EP</description>
+            </descriptions>
+         </format>
+      </formats>
+      <genres>
+         <genre>Electronic</genre>
+      </genres>
+      <styles>
+         <style>Deep House</style>
+      </styles>
+      <country>US</country>
+      <released>2000</released>
+      <notes>Written, produced and arranged for 40 Days &amp; 40 Nights Music.&#xD;
+Sweet Abraham appears courtesy of Diaspora Recordings.&#xD;
+℗© 2000 Deep4Life Recordings.</notes>
+      <data_quality>Needs Vote</data_quality>
+      <master_id is_main_release="true">48282</master_id>
+      <tracklist>
+         <track>
+            <position>A</position>
+            <title>Diaspora</title>
+            <duration>7:15</duration>
+         </track>
+         <track>
+            <position>AA1</position>
+            <title>Wallflower</title>
+            <duration>7:25</duration>
+         </track>
+         <track>
+            <position>AA2</position>
+            <title>Days Since Past</title>
+            <duration>6:28</duration>
+         </track>
+      </tracklist>
+      <identifiers />
+      <videos>
+         <video src="https://www.youtube.com/watch?v=Q_3oI_ouCTw" duration="395" embed="true">
+            <title>Sweet Abraham - Days Since Past</title>
+            <description>Track from Deep4Life</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=z6f5bKbX0Fs" duration="440" embed="true">
+            <title>Sweet Abraham - Diaspora [Deep4Life, D4L12004 ]</title>
+            <description />
+         </video>
+         <video src="https://www.youtube.com/watch?v=1XX3RTx5Bqk" duration="450" embed="true">
+            <title>Sweet Abraham - Wallflower</title>
+            <description />
+         </video>
+      </videos>
+      <companies>
+         <company>
+            <id>662061</id>
+            <name>Deep4Life Recordings</name>
+            <catno />
+            <entity_type>13</entity_type>
+            <entity_type_name>Phonographic Copyright (p)</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/662061</resource_url>
+         </company>
+         <company>
+            <id>662061</id>
+            <name>Deep4Life Recordings</name>
+            <catno />
+            <entity_type>14</entity_type>
+            <entity_type_name>Copyright (c)</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/662061</resource_url>
+         </company>
+         <company>
+            <id>1019382</id>
+            <name>40 Days/40 Nights Music</name>
+            <catno />
+            <entity_type>37</entity_type>
+            <entity_type_name>Produced For</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/1019382</resource_url>
+         </company>
+      </companies>
+   </release>
+   <release id="9" status="Accepted">
+      <images>
+         <image type="primary" uri="" uri150="" width="592" height="600" />
+         <image type="secondary" uri="" uri150="" width="600" height="599" />
+         <image type="secondary" uri="" uri150="" width="600" height="602" />
+         <image type="secondary" uri="" uri150="" width="600" height="599" />
+      </images>
+      <artists>
+         <artist>
+            <id>33</id>
+            <name>Blue Six</name>
+            <anv />
+            <join />
+            <role />
+            <tracks />
+         </artist>
+      </artists>
+      <title>Pure</title>
+      <labels>
+         <label name="Naked Music Recordings" catno="NM008" id="10" />
+      </labels>
+      <extraartists>
+         <artist>
+            <id>74994</id>
+            <name>Bruno Ybarra</name>
+            <anv />
+            <join />
+            <role>Executive-Producer</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>209463</id>
+            <name>David Boonshoft</name>
+            <anv>Dave Boonshoft</anv>
+            <join />
+            <role>Executive-Producer</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>99026</id>
+            <name>Monique Bingham</name>
+            <anv>Monique</anv>
+            <join />
+            <role>Featuring, Vocals</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>32</id>
+            <name>Jay Denes</name>
+            <anv>J. Denes</anv>
+            <join />
+            <role>Producer, Arranged By</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>32</id>
+            <name>Jay Denes</name>
+            <anv>J. Denes</anv>
+            <join />
+            <role>Written-By</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>99026</id>
+            <name>Monique Bingham</name>
+            <anv>M. Bingham</anv>
+            <join />
+            <role>Written-By</role>
+            <tracks />
+         </artist>
+      </extraartists>
+      <formats>
+         <format name="Vinyl" qty="1" text="">
+            <descriptions>
+               <description>12"</description>
+               <description>33 ⅓ RPM</description>
+            </descriptions>
+         </format>
+      </formats>
+      <genres>
+         <genre>Electronic</genre>
+      </genres>
+      <styles>
+         <style>House</style>
+         <style>Deep House</style>
+      </styles>
+      <country>US</country>
+      <released>2000</released>
+      <notes>Track A1: engineered at Moulton Street/SF.
+Track A2: original version written for Naked Music Recordings.
+
+C &amp; P Fur &amp; Femur Music (BMI)/M. Bingham (ASCAP) 2000.
+Naked Music NYC Recordings, LLC</notes>
+      <data_quality>Correct</data_quality>
+      <master_id is_main_release="true">595959</master_id>
+      <tracklist>
+         <track>
+            <position>A1</position>
+            <title>Pure (Mig's Petalpusher Vocal)</title>
+            <duration>7:02</duration>
+            <extraartists>
+               <artist>
+                  <id>9571</id>
+                  <name>Jay-J</name>
+                  <anv />
+                  <join />
+                  <role>Engineer</role>
+                  <tracks />
+               </artist>
+               <artist>
+                  <id>669</id>
+                  <name>Petalpusher</name>
+                  <anv />
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>A2</position>
+            <title>Pure (Jay's Original Vocal)</title>
+            <duration>4:30</duration>
+            <extraartists>
+               <artist>
+                  <id>209463</id>
+                  <name>David Boonshoft</name>
+                  <anv>D. Boonshoft</anv>
+                  <join />
+                  <role>Bass</role>
+                  <tracks />
+               </artist>
+               <artist>
+                  <id>352023</id>
+                  <name>Mark Anthony Jones</name>
+                  <anv>Mark Anthony 'thefunkiestmanalive' Jones</anv>
+                  <join />
+                  <role>Guitar, Backing Vocals</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>B1</position>
+            <title>Pure (Aquanote Tidal Mix)</title>
+            <duration>6:50</duration>
+            <extraartists>
+               <artist>
+                  <id>38</id>
+                  <name>Aquanote</name>
+                  <anv />
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>B2</position>
+            <title>Pure (Jay's Undercover Dub)</title>
+            <duration>6:45</duration>
+            <extraartists>
+               <artist>
+                  <id>32</id>
+                  <name>Jay Denes</name>
+                  <anv>J. Denes</anv>
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+      </tracklist>
+      <identifiers>
+         <identifier type="Matrix / Runout" description="Side A, hand-etched runout" value="NM-008 A1" />
+         <identifier type="Matrix / Runout" description="Side B, hand-etched runout" value="NM-008 B1" />
+         <identifier type="Rights Society" value="BMI" />
+         <identifier type="Rights Society" value="ASCAP" />
+      </identifiers>
+      <videos>
+         <video src="https://www.youtube.com/watch?v=fIcJzmdNQfw" duration="421" embed="true">
+            <title>Blue Six - Pure (Miguel Migs Petalpusher Mix)</title>
+            <description>Lyrics: http://www.elyrics.net/read/b/blue-six-lyrics/pure-lyrics.html</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=9gC8cXqRTDs" duration="267" embed="true">
+            <title>Blue Six - Pure (Original Mix)</title>
+            <description>Blue Six - Pure; Original track from the album Beautiful Tomorrow (2002)</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=i-8CY8MIfDk" duration="411" embed="true">
+            <title>Blue Six feat. Monique Bingham - Pure (Aquanote Tidal Remix)</title>
+            <description>Naked Music Recordings, Blue Six ''Pure EP''&#xD;
+http://www.naked-music.com/</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=LMSX1uj-Kqc" duration="403" embed="true">
+            <title>Blue Six - Pure (Jay's Undercover Dub)</title>
+            <description>Blue Six - Pure (Jay's Undercover Dub)</description>
+         </video>
+      </videos>
+      <companies>
+         <company>
+            <id>272720</id>
+            <name>Naked Music NYC Recordings, LLC</name>
+            <catno />
+            <entity_type>13</entity_type>
+            <entity_type_name>Phonographic Copyright (p)</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/272720</resource_url>
+         </company>
+         <company>
+            <id>272720</id>
+            <name>Naked Music NYC Recordings, LLC</name>
+            <catno />
+            <entity_type>14</entity_type>
+            <entity_type_name>Copyright (c)</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/272720</resource_url>
+         </company>
+         <company>
+            <id>272719</id>
+            <name>Fur &amp; Femur Music</name>
+            <catno />
+            <entity_type>21</entity_type>
+            <entity_type_name>Published By</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/272719</resource_url>
+         </company>
+         <company>
+            <id>727314</id>
+            <name>M. Bingham</name>
+            <catno />
+            <entity_type>21</entity_type>
+            <entity_type_name>Published By</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/727314</resource_url>
+         </company>
+         <company>
+            <id>355338</id>
+            <name>Moulton Studios</name>
+            <catno />
+            <entity_type>24</entity_type>
+            <entity_type_name>Engineered At</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/355338</resource_url>
+         </company>
+      </companies>
+   </release>
+   <release id="10" status="Accepted">
+      <images>
+         <image type="primary" uri="" uri150="" width="494" height="494" />
+         <image type="secondary" uri="" uri150="" width="600" height="596" />
+         <image type="secondary" uri="" uri150="" width="593" height="600" />
+         <image type="secondary" uri="" uri150="" width="597" height="600" />
+      </images>
+      <artists>
+         <artist>
+            <id>36</id>
+            <name>Lovetronic</name>
+            <anv />
+            <join />
+            <role />
+            <tracks />
+         </artist>
+      </artists>
+      <title>You Are Love</title>
+      <labels>
+         <label name="Naked Music Recordings" catno="NM003" id="10" />
+         <label name="Naked Music Recordings" catno="nm 003" id="10" />
+      </labels>
+      <extraartists>
+         <artist>
+            <id>74994</id>
+            <name>Bruno Ybarra</name>
+            <anv />
+            <join />
+            <role>Administrator [Label Director]</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>124833</id>
+            <name>Stuart Patterson</name>
+            <anv>S. Patterson</anv>
+            <join />
+            <role>Design, Illustration</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>209463</id>
+            <name>David Boonshoft</name>
+            <anv>Dave Boonshoft</anv>
+            <join />
+            <role>Executive-Producer</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>670</id>
+            <name>Lisa Shaw</name>
+            <anv />
+            <join />
+            <role>Vocals</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>40</id>
+            <name>Dave Warrin</name>
+            <anv />
+            <join />
+            <role>Written-By, Producer, Performer</role>
+            <tracks />
+         </artist>
+         <artist>
+            <id>32</id>
+            <name>Jay Denes</name>
+            <anv />
+            <join />
+            <role>Written-By, Producer, Performer</role>
+            <tracks />
+         </artist>
+      </extraartists>
+      <formats>
+         <format name="Vinyl" qty="1" text="">
+            <descriptions>
+               <description>12"</description>
+               <description>33 ⅓ RPM</description>
+            </descriptions>
+         </format>
+      </formats>
+      <genres>
+         <genre>Electronic</genre>
+      </genres>
+      <styles>
+         <style>Deep House</style>
+      </styles>
+      <country>US</country>
+      <released>1999</released>
+      <notes>Track A1: remix and arrangement for Naked Music NYC.
+Track A2: remix and arrangement for Payback Productions.
+Track B1: engineered at Moulton Street Studios.
+Track B2: original version written, produced and arranged for Naked Music NYC.
+
+Copyright 1999, Fur &amp; Femur Music (BMI).</notes>
+      <data_quality>Needs Vote</data_quality>
+      <master_id is_main_release="true">160011</master_id>
+      <tracklist>
+         <track>
+            <position>A1</position>
+            <title>You Are Love (Jay's Afrotronic Vocal)</title>
+            <duration>7:46</duration>
+            <extraartists>
+               <artist>
+                  <id>143102</id>
+                  <name>Carlos Gomez</name>
+                  <anv />
+                  <join />
+                  <role>Percussion [Additional]</role>
+                  <tracks />
+               </artist>
+               <artist>
+                  <id>32</id>
+                  <name>Jay Denes</name>
+                  <anv />
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>A2</position>
+            <title>You Are Love (After Hours Payback Session)</title>
+            <duration>7:30</duration>
+            <extraartists>
+               <artist>
+                  <id>356735</id>
+                  <name>Simon Bradshaw</name>
+                  <anv>Si Brad</anv>
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>B1</position>
+            <title>You Are Love (Petalpusher Dub)</title>
+            <duration>7:46</duration>
+            <extraartists>
+               <artist>
+                  <id>9571</id>
+                  <name>Jay-J</name>
+                  <anv />
+                  <join />
+                  <role>Engineer</role>
+                  <tracks />
+               </artist>
+               <artist>
+                  <id>34</id>
+                  <name>Miguel Migs</name>
+                  <anv />
+                  <join />
+                  <role>Remix, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+         <track>
+            <position>B2</position>
+            <title>You Are Love (Original Vocal)</title>
+            <duration>8:05</duration>
+            <extraartists>
+               <artist>
+                  <id>40</id>
+                  <name>Dave Warrin</name>
+                  <anv />
+                  <join />
+                  <role>Written-By, Producer, Arranged By</role>
+                  <tracks />
+               </artist>
+               <artist>
+                  <id>32</id>
+                  <name>Jay Denes</name>
+                  <anv />
+                  <join />
+                  <role>Written-By, Producer, Arranged By</role>
+                  <tracks />
+               </artist>
+            </extraartists>
+         </track>
+      </tracklist>
+      <identifiers>
+         <identifier type="Matrix / Runout" description="Side A, hand-etched runout" value="NM-003 A1 3226.1(3)" />
+         <identifier type="Matrix / Runout" description="Side B, hand-etched runout" value="NM-003 B1 3226.2(3)" />
+         <identifier type="Rights Society" value="BMI" />
+      </identifiers>
+      <videos>
+         <video src="https://www.youtube.com/watch?v=0FYPW8dDoi0" duration="427" embed="true">
+            <title>Lovetronic - You Are Love (Jay's Afrotonic Vocal)</title>
+            <description>Lovetronic - You Are Love (Jay's Afrotonic Vocal)</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=7h-mfq7SWQ8" duration="423" embed="true">
+            <title>Lovetronic ‎-- You Are Love</title>
+            <description>Let there be House·in Social Media: https://www.facebook.com/pages/Let-there-be-HOUSEmusic/532228046810551?ref=hl
+
+Label:
+Naked Music Recordings ‎-- NM003
+Format:
+Vinyl, 12
+Country:
+US
+Released:
+1999
+Genre:
+Electronic
+Style:
+Deep House 
+
+TO OWNERS &amp; C</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=mzG4sC2pMeY" duration="446" embed="true">
+            <title>Lovetronic  -  You Are Love (After Hours Payback Session)</title>
+            <description>1999. You Are Love Vinyl, 12  -  Naked Music Recordings
+Remix, Arranged By – Si Brad
+Vocals – Lisa Shaw
+Written-By, Producer, Arranged By – Dave Warrin, Jay Denes</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=kbItgmaxUyE" duration="427" embed="true">
+            <title>Lovetronic - You Are Love (Jay's Afrotonic Vocal) (1999)</title>
+            <description>Label : Naked Music (NM003)
+Style : Deep House, Vocal</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=lL2-6BGjPCw" duration="419" embed="true">
+            <title>Lovetronic - You Are Love (Petalpusher Dub)</title>
+            <description>Petalpusher Dub</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=yd6KqnKgsPk" duration="402" embed="true">
+            <title>Hotel Costes 2 - Lovetronic - You Are Love (Jay's Afrotonic Vocal)</title>
+            <description>Spotify            http://spoti.fi/2jpSRYp
+Deezer            http://bit.ly/2kFdHmk
+Apple Music    http://bit.ly/2kwBfPg</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=6IGXOK-gJGg" duration="380" embed="true">
+            <title>Lovetronic - You Are Love Jay's Afrotronic Extended Vocal</title>
+            <description />
+         </video>
+         <video src="https://www.youtube.com/watch?v=59w2TCEArVU" duration="510" embed="true">
+            <title>Lovetronic-You are Love (After Hours Payback Session)</title>
+            <description>Lounge, Chillout, Deep House gem. A J. Denes project, -best version in my opinion&#xD;
+-I don´t own the Music nor the Images. Please buy the record and participate in global well beings of a beautiful world. I´ll remove the youtubeclip if anyone makes claim</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=rgVAwbuzU-s" duration="479" embed="true">
+            <title>Lovetronic - You Are Love (After Hours Payback Session)</title>
+            <description>Created with http://www.mp32tube.com</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=FiExv4IJPAg" duration="445" embed="true">
+            <title>Lovetronic - You Are Love (After Hours Payback Session)</title>
+            <description>Lovetronic - You Are Love (After Hours Payback Session) (1999)
+*If any copyright issues, please contact me and I will be gladly to remove the video*
+more informations about this release :
+http://www.discogs.com/Lovetronic-You-Are-Love/release/10
+support c</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=_0ivMlEwOu8" duration="445" embed="true">
+            <title>You Are Love (Brad's Payback Vocal)</title>
+            <description>Provided to YouTube by Universal Music Group
+
+You Are Love (Brad's Payback Vocal) · Lovetronic
+
+Bare Essentials
+
+℗ 1999 Naked Music NYC Recordings LLC
+
+Released on: 2002-01-01
+
+Producer: Dave Warrin
+Producer: Jay Denes
+Associated  Performer, Vocals: Li</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=5tBitW3YH88" duration="445" embed="true">
+            <title>dhme - lovetronic - you are love (si brad's payback vocal)</title>
+            <description>This channel is created to promote and support artists!
+
+If any producer, label or copyright owner is unhappy with this upload, please contact us at dhmedallas@gmail.com and the content will be removed immediately.
+
+Enjoy the music!</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=IlJr87GUY48" duration="444" embed="true">
+            <title>Lovetronic - You Are Love [Si Brand's Payback Vocal]</title>
+            <description>EMI owns the audio! It was uploaded for entertainment.</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=QAS5MBCqxpM" duration="447" embed="true">
+            <title>lovetronic YOU ARE LOVE</title>
+            <description>Sick tune that was removed off the internet with a cool video as well. I just need to make this clear that I do not own the rights to this song or this video. This is simply a song and a video that was taken off of youtube and I thought it should be enjoy</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=lRH7hja41B8" duration="447" embed="true">
+            <title>Lovetronic You are Love</title>
+            <description />
+         </video>
+         <video src="https://www.youtube.com/watch?v=dCDlY8Mqs1c" duration="424" embed="true">
+            <title>Lovetronic - You Are Love (Original Version)</title>
+            <description>© Naked Music Recordings 1999, Various Artists ''Bare Essentials Volume 1'' 
+Style: Deep House
+
+http://www.naked-music.com/</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=_V5Ybtx99lw" duration="424" embed="true">
+            <title>You Are Love (Original Version)</title>
+            <description>Provided to YouTube by Universal Music Group
+
+You Are Love (Original Version) · Lovetronic
+
+Bare Essentials
+
+℗ 1999 Naked Music NYC Recordings LLC
+
+Released on: 2002-01-01
+
+Producer: Dave Warrin
+Producer: Jay Denes
+Associated  Performer, Vocals: Lisa S</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=k5zqX-fNJWU" duration="421" embed="true">
+            <title>Lovetronic - You Are Love (Original Version)</title>
+            <description>Bare Essentials Volume 1 (2001) is a compilation of house &amp; dance tracks featured on the Naked Music NYC label. Included are original, remix, and dub versions, some previously unreleased by Petalpusher, Groove Collective, Lovetronic, Blue Six, Night Sourc</description>
+         </video>
+         <video src="https://www.youtube.com/watch?v=qaMrbJoEUvw" duration="425" embed="true">
+            <title>Ambient Lounge Deep House (Lovetronic) You Are Love (Chillout Music)</title>
+            <description>Music Credits
+Artist: Lovetronic
+Song: You Are Love
+
+
+2018
+2017 (HQ) Ambient Summer Lounge Music Relaxation (Sunsets)
+2017 (HQ) Ambient Lounge Music Relaxation (Lovetronic) You Are Love (Chillout Music)</description>
+         </video>
+      </videos>
+      <companies>
+         <company>
+            <id>272719</id>
+            <name>Fur &amp; Femur Music</name>
+            <catno />
+            <entity_type>21</entity_type>
+            <entity_type_name>Published By</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/272719</resource_url>
+         </company>
+         <company>
+            <id>355338</id>
+            <name>Moulton Studios</name>
+            <catno />
+            <entity_type>24</entity_type>
+            <entity_type_name>Engineered At</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/355338</resource_url>
+         </company>
+         <company>
+            <id>1498978</id>
+            <name>Art Dept. NYC</name>
+            <catno />
+            <entity_type>33</entity_type>
+            <entity_type_name>Designed At</entity_type_name>
+            <resource_url>https://api.discogs.com/labels/1498978</resource_url>
+         </company>
+      </companies>
+   </release>
+</releases>
+
