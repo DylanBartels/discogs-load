@@ -1,18 +1,10 @@
-use std::{
-    fs::File,
-    error::Error,
-    io::BufReader,
-    path::PathBuf
-};
-use log::info;
-use structopt::StructOpt;
 use anyhow::Result;
-use flate2::read::GzDecoder;
 use encoding_rs_io::DecodeReaderBytes;
-use quick_xml::{
-    events::Event,
-    Reader,
-};
+use flate2::read::GzDecoder;
+use log::info;
+use quick_xml::{events::Event, Reader};
+use std::{error::Error, fs::File, io::BufReader, path::PathBuf};
+use structopt::StructOpt;
 
 mod db;
 mod releases;
@@ -31,7 +23,7 @@ struct Opt {
     dbopts: db::DbOpt,
 }
 
-fn main() -> Result<()> { 
+fn main() -> Result<()> {
     let log_env = env_logger::Env::default().default_filter_or("info");
     env_logger::Builder::from_env(log_env).init();
 
@@ -39,7 +31,7 @@ fn main() -> Result<()> {
 
     match load_releases(&opt) {
         Err(e) => println!("{:?}", e),
-        _ => ()
+        _ => (),
     }
     Ok(())
 }
@@ -55,7 +47,7 @@ fn load_releases(opt: &Opt) -> Result<(), Box<dyn Error>> {
 
     let mut releaseparser = releases::ReleasesParser::with_predicate();
     let mut buf = Vec::with_capacity(BUF_SIZE);
-    
+
     info!("Parsing XML and inserting into database...");
     loop {
         match xmlfile.read_event(&mut buf)? {

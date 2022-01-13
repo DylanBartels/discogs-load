@@ -1,18 +1,14 @@
-use std::{
-    collections::HashMap,
-    fs
-};
-use log::info;
 use anyhow::Result;
+use log::info;
+use postgres::{types::ToSql, Client, NoTls};
+use std::{collections::HashMap, fs};
 use structopt::StructOpt;
-use postgres::{Client, NoTls, types::ToSql};
 
 use crate::releases::{Release, ReleaseLabel, ReleaseVideo};
 
 #[derive(Debug, Clone, StructOpt)]
 pub struct DbOpt {
     // TODO: make these db config variables work
-
     // /// Number of rows per insert
     // #[structopt(long = "batch-size", default_value = "1000")]
     // pub batch_size: usize,
@@ -101,17 +97,34 @@ impl Db {
             .iter()
             .map(|x| x.as_ref() as &(dyn ToSql + Sync))
             .collect();
-        
-        let columns = (1..=data.len()*10)
+
+        let columns = (1..=data.len() * 10)
             .step_by(10)
-            .map(|c| format!("(${}, ${}, ${}, ${}, ${}, ${}, ${}, ${}, ${}, ${})", c, c+1, c+2, c+3, c+4, c+5, c+6, c+7, c+8, c+9))
+            .map(|c| {
+                format!(
+                    "(${}, ${}, ${}, ${}, ${}, ${}, ${}, ${}, ${}, ${})",
+                    c,
+                    c + 1,
+                    c + 2,
+                    c + 3,
+                    c + 4,
+                    c + 5,
+                    c + 6,
+                    c + 7,
+                    c + 8,
+                    c + 9
+                )
+            })
             .collect::<Vec<_>>()
             .join(", ");
-    
-            Client::connect("host=localhost user=dev password=dev_pass dbname=discogs", NoTls).unwrap().execute(
-            &format!("{}{}", query, columns),
-            &params,
-        ).unwrap();
+
+        Client::connect(
+            "host=localhost user=dev password=dev_pass dbname=discogs",
+            NoTls,
+        )
+        .unwrap()
+        .execute(&format!("{}{}", query, columns), &params)
+        .unwrap();
 
         Ok(())
     }
@@ -134,17 +147,20 @@ impl Db {
             .iter()
             .map(|x| x.as_ref() as &(dyn ToSql + Sync))
             .collect();
-        
-        let columns = (1..=data.len()*3)
+
+        let columns = (1..=data.len() * 3)
             .step_by(3)
-            .map(|c| format!("(${}, ${}, ${})", c, c+1, c+2))
+            .map(|c| format!("(${}, ${}, ${})", c, c + 1, c + 2))
             .collect::<Vec<_>>()
             .join(", ");
-    
-            Client::connect("host=localhost user=dev password=dev_pass dbname=discogs", NoTls).unwrap().execute(
-            &format!("{}{}", query, columns),
-            &params,
-        ).unwrap();
+
+        Client::connect(
+            "host=localhost user=dev password=dev_pass dbname=discogs",
+            NoTls,
+        )
+        .unwrap()
+        .execute(&format!("{}{}", query, columns), &params)
+        .unwrap();
 
         Ok(())
     }
@@ -168,17 +184,20 @@ impl Db {
             .iter()
             .map(|x| x.as_ref() as &(dyn ToSql + Sync))
             .collect();
-        
-        let columns = (1..=data.len()*4)
+
+        let columns = (1..=data.len() * 4)
             .step_by(4)
-            .map(|c| format!("(${}, ${}, ${}, ${})", c, c+1, c+2, c+3))
+            .map(|c| format!("(${}, ${}, ${}, ${})", c, c + 1, c + 2, c + 3))
             .collect::<Vec<_>>()
             .join(", ");
-    
-            Client::connect("host=localhost user=dev password=dev_pass dbname=discogs", NoTls).unwrap().execute(
-            &format!("{}{}", query, columns),
-            &params,
-        ).unwrap();
+
+        Client::connect(
+            "host=localhost user=dev password=dev_pass dbname=discogs",
+            NoTls,
+        )
+        .unwrap()
+        .execute(&format!("{}{}", query, columns), &params)
+        .unwrap();
 
         Ok(())
     }
