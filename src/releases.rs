@@ -92,27 +92,27 @@ impl ReleaseLabel {
 }
 
 #[derive(Copy, Clone, Debug)]
-enum ParserState {
+enum ParserReadState {
     // release
-    ReadRelease,
-    ReadTitle,
-    ReadCountry,
-    ReadReleased,
-    ReadNotes,
-    ReadGenres,
-    ReadGenre,
-    ReadStyles,
-    ReadStyle,
-    ReadMasterId,
-    ReadDataQuality,
+    Release,
+    Title,
+    Country,
+    Released,
+    Notes,
+    Genres,
+    Genre,
+    Styles,
+    Style,
+    MasterId,
+    DataQuality,
     // release_label
-    ReadLabels,
+    Labels,
     // release_video
-    ReadVideos,
+    Videos,
 }
 
 pub struct ReleasesParser<'a> {
-    state: ParserState,
+    state: ParserReadState,
     releases: HashMap<i32, Release>,
     current_release: Release,
     current_id: i32,
@@ -126,7 +126,7 @@ pub struct ReleasesParser<'a> {
 impl<'a> ReleasesParser<'a> {
     pub fn new(db_opts: &'a DbOpt) -> Self {
         ReleasesParser {
-            state: ParserState::ReadRelease,
+            state: ParserReadState::Release,
             releases: HashMap::new(),
             current_release: Release::new(),
             current_id: 0,
@@ -134,43 +134,38 @@ impl<'a> ReleasesParser<'a> {
             current_release_label: ReleaseLabel::new(),
             release_videos: HashMap::new(),
             pb: ProgressBar::new(14779645), // https://api.discogs.com/  - 14783275
-            db_opts: &db_opts,
+            db_opts,
         }
-    }
-
-    pub fn with_predicate(db_opts: &'a DbOpt) -> Self {
-        let parser = ReleasesParser::new(db_opts);
-        parser
     }
 
     pub fn process(&mut self, ev: Event) -> Result<(), Box<dyn Error>> {
         self.state = match self.state {
-            ParserState::ReadRelease => {
+            ParserReadState::Release => {
                 match ev {
                     Event::Start(e) if e.local_name() == b"release" => {
                         self.current_release.status = str::parse(str::from_utf8(
                             &e.attributes().nth(1).unwrap()?.unescaped_value()?,
                         )?)?;
                         self.current_id = str::parse(str::from_utf8(
-                            &e.attributes().nth(0).unwrap()?.unescaped_value()?,
+                            &e.attributes().next().unwrap()?.unescaped_value()?,
                         )?)?;
                         self.current_release.genres = Vec::new();
                         self.current_release.styles = Vec::new();
-                        ParserState::ReadRelease
+                        ParserReadState::Release
                     }
 
                     Event::Start(e) => match e.local_name() {
-                        b"title" => ParserState::ReadTitle,
-                        b"country" => ParserState::ReadCountry,
-                        b"released" => ParserState::ReadReleased,
-                        b"notes" => ParserState::ReadNotes,
-                        b"genres" => ParserState::ReadGenres,
-                        b"styles" => ParserState::ReadStyles,
-                        b"master_id" => ParserState::ReadMasterId,
-                        b"data_quality" => ParserState::ReadDataQuality,
-                        b"labels" => ParserState::ReadLabels,
-                        b"videos" => ParserState::ReadVideos,
-                        _ => ParserState::ReadRelease,
+                        b"title" => ParserReadState::Title,
+                        b"country" => ParserReadState::Country,
+                        b"released" => ParserReadState::Released,
+                        b"notes" => ParserReadState::Notes,
+                        b"genres" => ParserReadState::Genres,
+                        b"styles" => ParserReadState::Styles,
+                        b"master_id" => ParserReadState::MasterId,
+                        b"data_quality" => ParserReadState::DataQuality,
+                        b"labels" => ParserReadState::Labels,
+                        b"videos" => ParserReadState::Videos,
+                        _ => ParserReadState::Release,
                     },
 
                     Event::End(e) if e.local_name() == b"release" => {
@@ -180,138 +175,138 @@ impl<'a> ReleasesParser<'a> {
                         if self.releases.len() >= self.db_opts.batch_size {
                             // write to db every 1000 records and clean the hashmaps
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
-                            write_releases(&self.db_opts, &self.releases)?;
-                            write_release_labels(&self.db_opts, &self.release_labels)?;
-                            write_release_videos(&self.db_opts, &self.release_videos)?;
+                            write_releases(self.db_opts, &self.releases)?;
+                            write_release_labels(self.db_opts, &self.release_labels)?;
+                            write_release_videos(self.db_opts, &self.release_videos)?;
                             self.releases = HashMap::new();
                             self.release_labels = HashMap::new();
                             self.release_videos = HashMap::new();
                         }
                         self.pb.inc(1);
-                        ParserState::ReadRelease
+                        ParserReadState::Release
                     }
 
                     Event::End(e) if e.local_name() == b"releases" => {
                         // write to db remainder of releases
-                        write_releases(&self.db_opts, &self.releases)?;
-                        write_release_labels(&self.db_opts, &self.release_labels)?;
-                        write_release_videos(&self.db_opts, &self.release_videos)?;
-                        ParserState::ReadRelease
+                        write_releases(self.db_opts, &self.releases)?;
+                        write_release_labels(self.db_opts, &self.release_labels)?;
+                        write_release_videos(self.db_opts, &self.release_videos)?;
+                        ParserReadState::Release
                     }
 
-                    _ => ParserState::ReadRelease,
+                    _ => ParserReadState::Release,
                 }
             }
 
-            ParserState::ReadTitle => match ev {
+            ParserReadState::Title => match ev {
                 Event::Text(e) => {
                     self.current_release.title = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadTitle
+                    ParserReadState::Title
                 }
 
-                Event::End(e) if e.local_name() == b"title" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"title" => ParserReadState::Release,
 
-                _ => ParserState::ReadTitle,
+                _ => ParserReadState::Title,
             },
 
-            ParserState::ReadCountry => match ev {
+            ParserReadState::Country => match ev {
                 Event::Text(e) => {
                     self.current_release.country = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadCountry
+                    ParserReadState::Country
                 }
 
-                Event::End(e) if e.local_name() == b"country" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"country" => ParserReadState::Release,
 
-                _ => ParserState::ReadCountry,
+                _ => ParserReadState::Country,
             },
 
-            ParserState::ReadReleased => match ev {
+            ParserReadState::Released => match ev {
                 Event::Text(e) => {
                     self.current_release.released = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadReleased
+                    ParserReadState::Released
                 }
 
-                Event::End(e) if e.local_name() == b"released" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"released" => ParserReadState::Release,
 
-                _ => ParserState::ReadReleased,
+                _ => ParserReadState::Released,
             },
 
-            ParserState::ReadNotes => match ev {
+            ParserReadState::Notes => match ev {
                 Event::Text(e) => {
                     self.current_release.notes = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadNotes
+                    ParserReadState::Notes
                 }
 
-                Event::End(e) if e.local_name() == b"notes" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"notes" => ParserReadState::Release,
 
-                _ => ParserState::ReadNotes,
+                _ => ParserReadState::Notes,
             },
 
-            ParserState::ReadGenres => match ev {
-                Event::Start(e) if e.local_name() == b"genre" => ParserState::ReadGenre,
+            ParserReadState::Genres => match ev {
+                Event::Start(e) if e.local_name() == b"genre" => ParserReadState::Genre,
 
-                Event::End(e) if e.local_name() == b"genres" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"genres" => ParserReadState::Release,
 
-                _ => ParserState::ReadGenres,
+                _ => ParserReadState::Genres,
             },
 
-            ParserState::ReadGenre => match ev {
+            ParserReadState::Genre => match ev {
                 Event::Text(e) => {
                     self.current_release
                         .genres
                         .extend(str::parse(str::from_utf8(&e.unescaped()?)?));
-                    ParserState::ReadGenres
+                    ParserReadState::Genres
                 }
 
-                _ => ParserState::ReadGenres,
+                _ => ParserReadState::Genres,
             },
 
-            ParserState::ReadStyles => match ev {
-                Event::Start(e) if e.local_name() == b"style" => ParserState::ReadStyle,
+            ParserReadState::Styles => match ev {
+                Event::Start(e) if e.local_name() == b"style" => ParserReadState::Style,
 
-                Event::End(e) if e.local_name() == b"styles" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"styles" => ParserReadState::Release,
 
-                _ => ParserState::ReadStyles,
+                _ => ParserReadState::Styles,
             },
 
-            ParserState::ReadStyle => match ev {
+            ParserReadState::Style => match ev {
                 Event::Text(e) => {
                     self.current_release
                         .styles
                         .extend(str::parse(str::from_utf8(&e.unescaped()?)?));
-                    ParserState::ReadStyles
+                    ParserReadState::Styles
                 }
 
-                _ => ParserState::ReadStyles,
+                _ => ParserReadState::Styles,
             },
 
-            ParserState::ReadMasterId => match ev {
+            ParserReadState::MasterId => match ev {
                 Event::Text(e) => {
                     self.current_release.master_id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadMasterId
+                    ParserReadState::MasterId
                 }
 
-                Event::End(e) if e.local_name() == b"master_id" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"master_id" => ParserReadState::Release,
 
-                _ => ParserState::ReadMasterId,
+                _ => ParserReadState::MasterId,
             },
 
-            ParserState::ReadDataQuality => match ev {
+            ParserReadState::DataQuality => match ev {
                 Event::Text(e) => {
                     self.current_release.data_quality =
                         str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadDataQuality
+                    ParserReadState::DataQuality
                 }
 
-                Event::End(e) if e.local_name() == b"data_quality" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"data_quality" => ParserReadState::Release,
 
-                _ => ParserState::ReadDataQuality,
+                _ => ParserReadState::DataQuality,
             },
 
-            ParserState::ReadLabels => match ev {
+            ParserReadState::Labels => match ev {
                 Event::Empty(e) => {
                     self.current_release_label.label = str::parse(str::from_utf8(
-                        &e.attributes().nth(0).unwrap()?.unescaped_value()?,
+                        &e.attributes().next().unwrap()?.unescaped_value()?,
                     )?)?;
                     self.current_release_label.catno = str::parse(str::from_utf8(
                         &e.attributes().nth(1).unwrap()?.unescaped_value()?,
@@ -322,15 +317,15 @@ impl<'a> ReleasesParser<'a> {
                     self.release_labels
                         .entry(label_id)
                         .or_insert(self.current_release_label.clone());
-                    ParserState::ReadLabels
+                    ParserReadState::Labels
                 }
 
-                Event::End(e) if e.local_name() == b"labels" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"labels" => ParserReadState::Release,
 
-                _ => ParserState::ReadLabels,
+                _ => ParserReadState::Labels,
             },
 
-            ParserState::ReadVideos => match ev {
+            ParserReadState::Videos => match ev {
                 Event::Start(e) if e.local_name() == b"video" => {
                     self.release_videos
                         .entry(self.current_id)
@@ -339,16 +334,16 @@ impl<'a> ReleasesParser<'a> {
                                 &e.attributes().nth(1).unwrap()?.unescaped_value()?,
                             )?)?,
                             src: str::parse(str::from_utf8(
-                                &e.attributes().nth(0).unwrap()?.unescaped_value()?,
+                                &e.attributes().next().unwrap()?.unescaped_value()?,
                             )?)?,
                             title: String::new(),
                         });
-                    ParserState::ReadVideos
+                    ParserReadState::Videos
                 }
 
-                Event::End(e) if e.local_name() == b"videos" => ParserState::ReadRelease,
+                Event::End(e) if e.local_name() == b"videos" => ParserReadState::Release,
 
-                _ => ParserState::ReadVideos,
+                _ => ParserReadState::Videos,
             },
         };
 

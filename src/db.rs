@@ -42,24 +42,24 @@ pub fn init(db_opts: &DbOpt) -> Result<()> {
 /// Write the batch size to db
 pub fn write_releases(db_opts: &DbOpt, data: &HashMap<i32, Release>) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_release_rows(&mut db, &data)?;
+    Db::write_release_rows(&mut db, data)?;
     Ok(())
 }
 
 pub fn write_release_labels(db_opts: &DbOpt, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_release_labels_rows(&mut db, &data)?;
+    Db::write_release_labels_rows(&mut db, data)?;
     Ok(())
 }
 
 pub fn write_release_videos(db_opts: &DbOpt, data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_release_videos_rows(&mut db, &data)?;
+    Db::write_release_videos_rows(&mut db, data)?;
     Ok(())
 }
 
 struct Db {
-    db_client: Client
+    db_client: Client,
 }
 
 impl Db {
@@ -70,9 +70,7 @@ impl Db {
         );
         let client = Client::connect(&connection_string, NoTls)?;
 
-        Ok(Db {
-            db_client: client
-        })
+        Ok(Db { db_client: client })
     }
 
     fn write_release_rows(&mut self, data: &HashMap<i32, Release>) -> Result<()> {
@@ -121,7 +119,8 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        self.db_client.execute(&format!("{}{}", query, columns), &params)?;
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
@@ -151,7 +150,8 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        self.db_client.execute(&format!("{}{}", query, columns), &params)?;
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
@@ -182,7 +182,8 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        self.db_client.execute(&format!("{}{}", query, columns), &params)?;
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
