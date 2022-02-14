@@ -45,7 +45,7 @@ fn load_releases(opt: &Opt) -> Result<(), Box<dyn Error>> {
     let xmlfile = BufReader::new(DecodeReaderBytes::new(xmlfile));
     let mut xmlfile = Reader::from_reader(xmlfile);
 
-    let mut releaseparser = releases::ReleasesParser::with_predicate();
+    let mut releaseparser = releases::ReleasesParser::with_predicate(&opt.dbopts);
     let mut buf = Vec::with_capacity(BUF_SIZE);
 
     info!("Parsing XML and inserting into database...");

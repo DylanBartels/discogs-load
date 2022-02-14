@@ -49,4 +49,5 @@ select * from release;
     - labels
     - artists
     - masters
-- Implement the db argparse env variables
+
+# Add functional dbOpts arguments

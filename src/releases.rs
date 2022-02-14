@@ -2,7 +2,7 @@ use indicatif::ProgressBar;
 use quick_xml::events::Event;
 use std::{collections::HashMap, error::Error, str};
 
-use crate::db::{write_release_labels, write_release_videos, write_releases};
+use crate::db::{write_release_labels, write_release_videos, write_releases, DbOpt};
 
 // macro rule to dynamically get the names of a struct
 macro_rules! get_struct_field_names {(
@@ -111,7 +111,7 @@ enum ParserState {
     ReadVideos,
 }
 
-pub struct ReleasesParser {
+pub struct ReleasesParser<'a> {
     state: ParserState,
     releases: HashMap<i32, Release>,
     current_release: Release,
@@ -120,10 +120,11 @@ pub struct ReleasesParser {
     current_release_label: ReleaseLabel,
     release_videos: HashMap<i32, ReleaseVideo>,
     pb: ProgressBar,
+    db_opts: &'a DbOpt,
 }
 
-impl ReleasesParser {
-    pub fn new() -> Self {
+impl<'a> ReleasesParser<'a> {
+    pub fn new(db_opts: &'a DbOpt) -> Self {
         ReleasesParser {
             state: ParserState::ReadRelease,
             releases: HashMap::new(),
@@ -133,11 +134,12 @@ impl ReleasesParser {
             current_release_label: ReleaseLabel::new(),
             release_videos: HashMap::new(),
             pb: ProgressBar::new(14779645), // https://api.discogs.com/  - 14783275
+            db_opts: &db_opts,
         }
     }
 
-    pub fn with_predicate() -> Self {
-        let parser = ReleasesParser::new();
+    pub fn with_predicate(db_opts: &'a DbOpt) -> Self {
+        let parser = ReleasesParser::new(db_opts);
         parser
     }
 
@@ -175,12 +177,12 @@ impl ReleasesParser {
                         self.releases
                             .entry(self.current_id)
                             .or_insert(self.current_release.clone());
-                        if self.releases.len() > 999 {
+                        if self.releases.len() >= self.db_opts.batch_size {
                             // write to db every 1000 records and clean the hashmaps
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
-                            write_releases(&self.releases)?;
-                            write_release_labels(&self.release_labels)?;
-                            write_release_videos(&self.release_videos)?;
+                            write_releases(&self.db_opts, &self.releases)?;
+                            write_release_labels(&self.db_opts, &self.release_labels)?;
+                            write_release_videos(&self.db_opts, &self.release_videos)?;
                             self.releases = HashMap::new();
                             self.release_labels = HashMap::new();
                             self.release_videos = HashMap::new();
@@ -191,9 +193,9 @@ impl ReleasesParser {
 
                     Event::End(e) if e.local_name() == b"releases" => {
                         // write to db remainder of releases
-                        write_releases(&self.releases)?;
-                        write_release_labels(&self.release_labels)?;
-                        write_release_videos(&self.release_videos)?;
+                        write_releases(&self.db_opts, &self.releases)?;
+                        write_release_labels(&self.db_opts, &self.release_labels)?;
+                        write_release_videos(&self.db_opts, &self.release_videos)?;
                         ParserState::ReadRelease
                     }
 
