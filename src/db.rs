@@ -8,27 +8,26 @@ use crate::releases::{Release, ReleaseLabel, ReleaseVideo};
 
 #[derive(Debug, Clone, StructOpt)]
 pub struct DbOpt {
-    // TODO: make these db config variables work
-    // /// Number of rows per insert
-    // #[structopt(long = "batch-size", default_value = "1000")]
-    // pub batch_size: usize,
-    // /// Database host
-    // #[structopt(long = "db-host", default_value = "localhost")]
-    // pub db_host: String,
-    // /// Database user
-    // #[structopt(long = "db-user", default_value = "dev")]
-    // pub db_user: String,
-    // /// Database password
-    // #[structopt(long = "db-password", default_value = "dev_pass")]
-    // pub db_password: String,
-    // /// Database name
-    // #[structopt(long = "db-name", default_value = "discogs")]
-    // pub db_name: String,
+    /// Number of rows per insert
+    #[structopt(long = "batch-size", default_value = "1000")]
+    pub batch_size: usize,
+    /// Database host
+    #[structopt(long = "db-host", default_value = "localhost")]
+    pub db_host: String,
+    /// Database user
+    #[structopt(long = "db-user", default_value = "dev")]
+    pub db_user: String,
+    /// Database password
+    #[structopt(long = "db-password", default_value = "dev_pass")]
+    pub db_password: String,
+    /// Database name
+    #[structopt(long = "db-name", default_value = "discogs")]
+    pub db_name: String,
 }
 
 /// Initialize schema and close connection.
-pub fn init(opts: &DbOpt) -> Result<()> {
-    let db = Db::connect(opts);
+pub fn init(db_opts: &DbOpt) -> Result<()> {
+    let db = Db::connect(db_opts);
     Db::create_schema(&mut db?)?;
     Ok(())
 }
@@ -41,38 +40,40 @@ pub fn init(opts: &DbOpt) -> Result<()> {
 // }
 
 /// Write the batch size to db
-pub fn write_releases(data: &HashMap<i32, Release>) -> Result<()> {
-    Db::write_release_rows(&data)?;
+pub fn write_releases(db_opts: &DbOpt, data: &HashMap<i32, Release>) -> Result<()> {
+    let mut db = Db::connect(db_opts)?;
+    Db::write_release_rows(&mut db, data)?;
     Ok(())
 }
 
-pub fn write_release_labels(data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
-    Db::write_release_labels_rows(&data)?;
+pub fn write_release_labels(db_opts: &DbOpt, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
+    let mut db = Db::connect(db_opts)?;
+    Db::write_release_labels_rows(&mut db, data)?;
     Ok(())
 }
 
-pub fn write_release_videos(data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
-    Db::write_release_videos_rows(&data)?;
+pub fn write_release_videos(db_opts: &DbOpt, data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
+    let mut db = Db::connect(db_opts)?;
+    Db::write_release_videos_rows(&mut db, data)?;
     Ok(())
 }
 
 struct Db {
     db_client: Client,
-    // batch_size: usize,
 }
 
 impl Db {
-    pub fn connect(_opts: &DbOpt) -> Result<Self> {
-        let connection_string = "host=localhost user=dev password=dev_pass dbname=discogs";
-        let client = Client::connect(connection_string, NoTls).unwrap();
+    pub fn connect(db_opts: &DbOpt) -> Result<Self> {
+        let connection_string = format!(
+            "host={} user={} password={} dbname={}",
+            db_opts.db_host, db_opts.db_user, db_opts.db_password, db_opts.db_name
+        );
+        let client = Client::connect(&connection_string, NoTls)?;
 
-        Ok(Db {
-            db_client: client,
-            // batch_size: opts.batch_size
-        })
+        Ok(Db { db_client: client })
     }
 
-    fn write_release_rows(data: &HashMap<i32, Release>) -> Result<()> {
+    fn write_release_rows(&mut self, data: &HashMap<i32, Release>) -> Result<()> {
         let query_begin = "INSERT INTO release (id, ";
         let fields = &Release::field_names().join(", ");
         let query_end = ") VALUES ";
@@ -118,18 +119,13 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        Client::connect(
-            "host=localhost user=dev password=dev_pass dbname=discogs",
-            NoTls,
-        )
-        .unwrap()
-        .execute(&format!("{}{}", query, columns), &params)
-        .unwrap();
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
 
-    fn write_release_labels_rows(data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
+    fn write_release_labels_rows(&mut self, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
         let query_begin = "INSERT INTO release_label (id, ";
         let fields = &ReleaseLabel::field_names().join(", ");
         let query_end = ") VALUES ";
@@ -154,18 +150,13 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        Client::connect(
-            "host=localhost user=dev password=dev_pass dbname=discogs",
-            NoTls,
-        )
-        .unwrap()
-        .execute(&format!("{}{}", query, columns), &params)
-        .unwrap();
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
 
-    fn write_release_videos_rows(data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
+    fn write_release_videos_rows(&mut self, data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
         let query_begin = "INSERT INTO release_video (id, ";
         let fields = &ReleaseVideo::field_names().join(", ");
         let query_end = ") VALUES ";
@@ -191,13 +182,8 @@ impl Db {
             .collect::<Vec<_>>()
             .join(", ");
 
-        Client::connect(
-            "host=localhost user=dev password=dev_pass dbname=discogs",
-            NoTls,
-        )
-        .unwrap()
-        .execute(&format!("{}{}", query, columns), &params)
-        .unwrap();
+        self.db_client
+            .execute(&format!("{}{}", query, columns), &params)?;
 
         Ok(())
     }
