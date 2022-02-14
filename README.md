@@ -49,5 +49,3 @@ select * from release;
     - labels
     - artists
     - masters
-
-# Add functional dbOpts arguments
