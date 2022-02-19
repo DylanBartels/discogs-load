@@ -9,7 +9,7 @@ use crate::release::{Release, ReleaseLabel, ReleaseVideo, SqlSerialization};
 #[derive(Debug, Clone, StructOpt)]
 pub struct DbOpt {
     /// Number of rows per insert
-    #[structopt(long = "batch-size", default_value = "1000")]
+    #[structopt(long = "batch-size", default_value = "10000")]
     pub batch_size: usize,
     /// Database host
     #[structopt(long = "db-host", default_value = "localhost")]
