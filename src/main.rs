@@ -1,5 +1,4 @@
 use anyhow::Result;
-use encoding_rs_io::DecodeReaderBytes;
 use flate2::read::GzDecoder;
 use log::info;
 use quick_xml::{events::Event, Reader};
@@ -7,7 +6,7 @@ use std::{error::Error, fs::File, io::BufReader, path::PathBuf};
 use structopt::StructOpt;
 
 mod db;
-mod releases;
+mod release;
 
 const BUF_SIZE: usize = 4096; // 4kb at once
 
@@ -41,10 +40,10 @@ fn load_releases(opt: &Opt) -> Result<(), Box<dyn Error>> {
     let gzfile = File::open(&opt.files[0].to_str().unwrap())?;
     let xmlfile = GzDecoder::new(gzfile);
 
-    let xmlfile = BufReader::new(DecodeReaderBytes::new(xmlfile));
+    let xmlfile = BufReader::new(xmlfile);
     let mut xmlfile = Reader::from_reader(xmlfile);
 
-    let mut releaseparser = releases::ReleasesParser::new(&opt.dbopts);
+    let mut releaseparser = release::ReleasesParser::new(&opt.dbopts);
     let mut buf = Vec::with_capacity(BUF_SIZE);
 
     info!("Parsing XML and inserting into database...");

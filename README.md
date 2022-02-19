@@ -42,9 +42,6 @@ select * from release;
 
 ## Contributing/Remaining todo
 
-- Implement [COPY_IN](https://docs.rs/postgres/0.15.2/postgres/stmt/struct.Statement.html#method.copy_in)
-    - Postgres COPY is faster than the current multi row insertion.
-    - will also refactor current ugly functions of `write_table`
 - Other (smaller) files from the monthly discogs data dump
     - labels
     - artists
