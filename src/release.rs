@@ -1,70 +1,70 @@
 use indicatif::ProgressBar;
+use postgres::types::ToSql;
 use quick_xml::events::Event;
 use std::{collections::HashMap, error::Error, str};
 
-use crate::db::{write_release_labels, write_release_videos, write_releases, DbOpt};
+use crate::db::{write_releases, DbOpt};
 
-// macro rule to dynamically get the names of a struct
-macro_rules! get_struct_field_names {(
-    // meta data about struct
-    $(#[$meta:meta])*
-    pub struct $name:ident {
-        $(pub $fname:ident : $ftype:ty),
-        *
-    }) => {
-        $(#[$meta])*
-        pub struct $name {
-            $(pub $fname : $ftype),
-            *
-        }
+pub trait SqlSerialization {
+    fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)>;
+}
 
-        impl $name {
-            pub fn field_names() -> &'static [&'static str] {
-                static NAMES: &'static [&'static str] = &[$(stringify!($fname)),*];
-                NAMES
-            }
+#[derive(Clone, Debug)]
+pub struct Release {
+    pub status: String,
+    pub title: String,
+    pub country: String,
+    pub released: String,
+    pub notes: String,
+    pub genres: Vec<String>,
+    pub styles: Vec<String>,
+    pub master_id: i32,
+    pub data_quality: String,
+}
 
-            // pub fn field_count() -> usize {
-            //     static COUNT: usize = [$(stringify!($fname)),*].len();
-            //     COUNT
-            // }
-        }
+impl SqlSerialization for Release {
+    fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
+        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
+            &self.status,
+            &self.title,
+            &self.country,
+            &self.released,
+            &self.notes,
+            &self.genres,
+            &self.styles,
+            &self.master_id,
+            &self.data_quality,
+        ];
+        row
     }
 }
 
-get_struct_field_names! {
-    #[derive(Clone, Debug)]
-    pub struct Release {
-        pub status: String,
-        pub title: String,
-        pub country: String,
-        pub released: String,
-        pub notes: String,
-        pub genres: Vec<String>,
-        pub styles: Vec<String>,
-        pub master_id: i32,
-        pub data_quality: String
+#[derive(Clone, Debug)]
+pub struct ReleaseLabel {
+    pub label: String,
+    pub catno: String,
+}
+
+impl SqlSerialization for ReleaseLabel {
+    fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
+        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.label, &self.catno];
+        row
     }
 }
 
-get_struct_field_names! {
-    #[derive(Clone, Debug)]
-    pub struct ReleaseLabel {
-        pub label: String,
-        pub catno: String
-    }
+#[derive(Clone, Debug)]
+pub struct ReleaseVideo {
+    pub duration: i32,
+    pub src: String,
+    pub title: String,
 }
 
-get_struct_field_names! {
-    #[derive(Clone, Debug)]
-    pub struct ReleaseVideo {
-        pub duration: i32,
-        pub src: String,
-        pub title: String
+impl SqlSerialization for ReleaseVideo {
+    fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
+        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.duration, &self.src, &self.title];
+        row
     }
 }
-
-// use crate::db::write_batch;
 
 impl Release {
     pub fn new() -> Self {
@@ -175,9 +175,12 @@ impl<'a> ReleasesParser<'a> {
                         if self.releases.len() >= self.db_opts.batch_size {
                             // write to db every 1000 records and clean the hashmaps
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
-                            write_releases(self.db_opts, &self.releases)?;
-                            write_release_labels(self.db_opts, &self.release_labels)?;
-                            write_release_videos(self.db_opts, &self.release_videos)?;
+                            write_releases(
+                                self.db_opts,
+                                &self.releases,
+                                &self.release_labels,
+                                &self.release_videos,
+                            )?;
                             self.releases = HashMap::new();
                             self.release_labels = HashMap::new();
                             self.release_videos = HashMap::new();
@@ -188,9 +191,12 @@ impl<'a> ReleasesParser<'a> {
 
                     Event::End(e) if e.local_name() == b"releases" => {
                         // write to db remainder of releases
-                        write_releases(self.db_opts, &self.releases)?;
-                        write_release_labels(self.db_opts, &self.release_labels)?;
-                        write_release_videos(self.db_opts, &self.release_videos)?;
+                        write_releases(
+                            self.db_opts,
+                            &self.releases,
+                            &self.release_labels,
+                            &self.release_videos,
+                        )?;
                         ParserReadState::Release
                     }
 
