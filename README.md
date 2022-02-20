@@ -2,25 +2,54 @@
 
 A Rust application that inserts [Discogs data dumps](http://www.discogs.com/data/) into Postgres.
 
-Discogs-load uses a simple [state machine](https://en.wikipedia.org/wiki/Finite-state_machine) with the quick-xml Rust library to parse the monthly data dump of discogs and load it into postgres. At moment of writing the largest file of the monthly dump is ~10 gb compressed and takes ~15 minutes to parse and load on a mac air m1.
+Discogs-load uses a simple [state machine](https://en.wikipedia.org/wiki/Finite-state_machine) with the quick-xml Rust library to parse the monthly data dump of discogs and load it into postgres. At moment of writing the largest file of the monthly dump is ~10 gb compressed and takes ~15 minutes to parse and load on a Mac air m1.
 
 Inspired by [discogs-xml2db](https://github.com/philipmat/discogs-xml2db) and [discogs2pg](https://github.com/alvare/discogs2pg).
 
-# Installation
+## Local binary installation
 
-Create a binary.
+Compile your own binary, which requires Rust.
 
 ```
-cargo build --release
+cargo build --bin discogs-load --release
+./target/release/discogs-load --help
+```
+
+Or download a compressed binary compiled by the Github actions from the [Releases](https://github.com/dylanbartels/discogs-load/releases) page for different platforms and architectures.
+
+The binary needs to be made executable after downloading:
+
+```bash
+$ gunzip discogs-load-aarch64-apple-darwin.gz
+$ chmod +x discogs-load-aarch64-apple-darwin
+$ ./discogs-load-aarch64-apple-darwin --help
+discogs-load 0.1.0
+
+USAGE:
+    discogs-load [OPTIONS] [FILE]...
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+        --batch-size <batch-size>      Number of rows per insert [default: 10000]
+        --db-host <db-host>            Database host [default: localhost]
+        --db-name <db-name>            Database name [default: discogs]
+        --db-password <db-password>    Database password [default: dev_pass]
+        --db-user <db-user>            Database user [default: dev]
+
+ARGS:
+    <FILE>...    Path to the releases file, still compressed
 ```
 
 ## Usage
 
-Download the releases data dump [here](http://www.discogs.com/data/), and run the binary with the path to the gz compressed file as only argument.
+Download the releases data dump [here](http://www.discogs.com/data/), and run the binary with the path to the gz compressed file as only argument. For the example below we'll use a dockerized postgres instance.
 
 ```
 docker-compose up -d postgres
-./target/release/discogs-load discogs_20211201_releases.xml.gz
+./discogs-load-aarch64-apple-darwin discogs_20211201_releases.xml.gz
 ```
 
 ## Tests
@@ -29,7 +58,7 @@ If you don't want to run the huge releases file, it is possible to run a smaller
 
 ```
 docker-compose up -d postgres
-cargo run tests/data/discogs_test_releases.xml.gz
+cargo run --bin discogs-load discogs-load/tests/data/discogs_test_releases.xml.gz
 ```
 
 And do a small manual test:
