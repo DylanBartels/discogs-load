@@ -29,7 +29,8 @@ fn main() -> Result<()> {
     let opt = Opt::from_args();
 
     if let Err(e) = load_releases(&opt) {
-        println!("{:?}", e)
+        println!("{:?}", e);
+        std::process::exit(1);
     }
     Ok(())
 }

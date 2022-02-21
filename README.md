@@ -1,5 +1,7 @@
 # Discogs-load
 
+[![ci-workflow](https://github.com/dylanbartels/discogs-load/actions/workflows/ci.yml/badge.svg)](https://github.com/dylanbartels/discogs-load/actions?query=workflow%3ACI+branch%3Amaster)
+
 A Rust application that inserts [Discogs data dumps](http://www.discogs.com/data/) into Postgres.
 
 Discogs-load uses a simple [state machine](https://en.wikipedia.org/wiki/Finite-state_machine) with the quick-xml Rust library to parse the monthly data dump of discogs and load it into postgres. At moment of writing the largest file of the monthly dump is ~10 gb compressed and takes ~15 minutes to parse and load on a Mac air m1.

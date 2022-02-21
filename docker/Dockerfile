@@ -2,7 +2,7 @@ FROM rust:latest as build
 
 WORKDIR /app
 
-COPY Cargo.lock Cargo.toml ./
+COPY Cargo.toml ./
 COPY discogs-load discogs-load
 COPY xtask xtask
 COPY sql sql
