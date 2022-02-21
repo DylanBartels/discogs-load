@@ -2,17 +2,18 @@ FROM rust:latest as build
 
 WORKDIR /app
 
-COPY Cargo.lock Cargo.toml ./
-COPY src src
+COPY Cargo.toml ./
+COPY discogs-load discogs-load
+COPY xtask xtask
 COPY sql sql
-COPY tests tests
 
-RUN cargo build --release --all
+RUN cargo build --bin discogs-load --release
 
 FROM debian:buster-slim
 
 WORKDIR /app
 COPY --from=build /app/target/release/discogs-load ./
+COPY --from=build /app/sql ./sql
+COPY --from=build /app/discogs-load/tests ./tests
 
-ENTRYPOINT ["/app/discogs-load"]
-CMD ["/app/tests/data/discogs_test_releases.xml.gz"]
+CMD /app/discogs-load --db-host ${POSTGRES_HOST} /app/tests/data/discogs_test_releases.xml.gz

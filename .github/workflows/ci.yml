@@ -1,0 +1,21 @@
+name: CI
+on: push
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -  uses: actions/checkout@v2
+      -  name: Build
+         run: docker-compose up -d postgres
+      
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+          profile: minimal
+          override: true
+
+      - name: Run
+        run: cargo run --bin discogs-load discogs-load/tests/data/discogs_test_releases.xml.gz

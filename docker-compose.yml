@@ -6,9 +6,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=dev
-      - POSTGRES_PASSWORD=dev_pass
-      - POSTGRES_DB=discogs
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev_pass
+      POSTGRES_DB: discogs
     healthcheck:
       test: pg_isready -q -d $${POSTGRES_DB} -U $${POSTGRES_USER} || exit 1
       interval: 5s
@@ -20,6 +20,11 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev_pass
+      POSTGRES_DB: discogs
+      POSTGRES_HOST: postgres
     depends_on:
       postgres:
         condition: service_healthy
