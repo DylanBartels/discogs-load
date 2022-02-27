@@ -60,7 +60,7 @@ If you don't want to run the huge releases file, it is possible to run a smaller
 
 ```
 docker-compose up -d postgres
-cargo run --bin discogs-load discogs-load/tests/data/discogs_test_releases.xml.gz
+cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
 ```
 
 And do a small manual test:
@@ -73,7 +73,5 @@ select * from release;
 
 ## Contributing/Remaining todo
 
-- Other (smaller) files from the monthly discogs data dump
-    - labels
-    - artists
-    - masters
+- Create a parser for the masters dataset
+- Create a proper relational database schema
