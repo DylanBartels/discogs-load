@@ -17,5 +17,11 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Run
-        run: cargo run --bin discogs-load discogs-load/tests/data/discogs_test_releases.xml.gz
+      - name: Run releases
+        run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
+      
+      - name: Run labels
+        run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
+      
+      - name: Run artists
+        run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz

@@ -5,7 +5,10 @@ use quick_xml::{events::Event, Reader};
 use std::{error::Error, fs::File, io::BufReader, path::PathBuf};
 use structopt::StructOpt;
 
+mod artist;
 mod db;
+mod label;
+mod parser;
 mod release;
 
 const BUF_SIZE: usize = 4096; // 4kb at once
@@ -28,32 +31,67 @@ fn main() -> Result<()> {
 
     let opt = Opt::from_args();
 
-    if let Err(e) = load_releases(&opt) {
+    if let Err(e) = read_files(&opt) {
         println!("{:?}", e);
         std::process::exit(1);
     }
     Ok(())
 }
 
-fn load_releases(opt: &Opt) -> Result<(), Box<dyn Error>> {
-    db::init(&opt.dbopts)?;
+fn read_files(opt: &Opt) -> Result<(), Box<dyn Error>> {
+    for file in &opt.files {
+        let gzfile = File::open(file.to_str().unwrap())?;
+        let xmlfile = GzDecoder::new(gzfile);
+        let xmlfile = BufReader::new(xmlfile);
+        let mut xmlfile = Reader::from_reader(xmlfile);
+        let mut buf = Vec::with_capacity(BUF_SIZE);
 
-    let gzfile = File::open(&opt.files[0].to_str().unwrap())?;
-    let xmlfile = GzDecoder::new(gzfile);
-
-    let xmlfile = BufReader::new(xmlfile);
-    let mut xmlfile = Reader::from_reader(xmlfile);
-
-    let mut releaseparser = release::ReleasesParser::new(&opt.dbopts);
-    let mut buf = Vec::with_capacity(BUF_SIZE);
-
-    info!("Parsing XML and inserting into database...");
-    loop {
-        match xmlfile.read_event(&mut buf)? {
-            Event::Eof => break,
-            ev => releaseparser.process(ev)?,
+        // Parse fileinput on type
+        let mut parser: Box<dyn parser::Parser> = loop {
+            if let Event::Start(ref e) = xmlfile.read_event(&mut buf)? {
+                match e.name() {
+                    b"labels" => {
+                        db::init(&opt.dbopts, "sql/tables/label.sql")?;
+                        break Box::new(parser::Parser::new(
+                            &label::LabelsParser::new(&opt.dbopts),
+                            &opt.dbopts,
+                        ));
+                    }
+                    b"releases" => {
+                        db::init(&opt.dbopts, "sql/tables/release.sql")?;
+                        break Box::new(parser::Parser::new(
+                            &release::ReleasesParser::new(&opt.dbopts),
+                            &opt.dbopts,
+                        ));
+                    }
+                    b"artists" => {
+                        db::init(&opt.dbopts, "sql/tables/artist.sql")?;
+                        break Box::new(parser::Parser::new(
+                            &artist::ArtistsParser::new(&opt.dbopts),
+                            &opt.dbopts,
+                        ));
+                    }
+                    _ => (),
+                };
+                buf.clear();
+            };
+            buf.clear();
         };
-        buf.clear();
+
+        // Parse and insert file
+        let gzfile = File::open(file.to_str().unwrap())?;
+        let xmlfile = GzDecoder::new(gzfile);
+        let xmlfile = BufReader::new(xmlfile);
+        let mut xmlfile = Reader::from_reader(xmlfile);
+        let mut buf = Vec::with_capacity(BUF_SIZE);
+        info!("Parsing and inserting: {:?}", file.file_name().unwrap());
+        loop {
+            match xmlfile.read_event(&mut buf)? {
+                Event::Eof => break,
+                ev => parser.process(ev)?,
+            };
+            buf.clear();
+        }
     }
 
     // db::indexes(&opt.dbopts)?;

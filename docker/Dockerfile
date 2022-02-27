@@ -16,4 +16,4 @@ COPY --from=build /app/target/release/discogs-load ./
 COPY --from=build /app/sql ./sql
 COPY --from=build /app/discogs-load/tests ./tests
 
-CMD /app/discogs-load --db-host ${POSTGRES_HOST} /app/tests/data/discogs_test_releases.xml.gz
+CMD /app/discogs-load --db-host ${POSTGRES_HOST}  /app/test_data/releases.xml.gz /app/test_data/labels.xml.gz /app/test_data/artists.xml.gz
