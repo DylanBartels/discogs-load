@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labels>
+   <label>
+      <images>
+         <image type="primary" uri="" uri150="" width="132" height="24" />
+         <image type="secondary" uri="" uri150="" width="587" height="126" />
+         <image type="secondary" uri="" uri150="" width="600" height="196" />
+         <image type="secondary" uri="" uri150="" width="275" height="121" />
+         <image type="secondary" uri="" uri150="" width="382" height="720" />
+         <image type="secondary" uri="" uri150="" width="500" height="398" />
+         <image type="secondary" uri="" uri150="" width="600" height="189" />
+      </images>
+      <id>1</id>
+      <name>Planet E</name>
+      <contactinfo>Planet E Communications&#xD;
+P.O. Box 27218&#xD;
+Detroit, Michigan, MI 48227&#xD;
+USA&#xD;
+&#xD;
+Phone: +1 313 874 8729&#xD;
+Fax: +1 313 874 8732&#xD;
+Email: info@Planet-e.net</contactinfo>
+      <profile>[a=Carl Craig]'s classic techno label founded in 1991.&#xD;
+&#xD;
+On at least 1 release, Planet E is listed as publisher.</profile>
+      <data_quality>Correct</data_quality>
+      <urls>
+         <url>http://planet-e.net</url>
+         <url>http://planetecommunications.bandcamp.com</url>
+         <url>http://www.facebook.com/planetedetroit</url>
+         <url>http://www.flickr.com/photos/planetedetroit</url>
+         <url>http://plus.google.com/100841702106447505236</url>
+         <url>http://www.instagram.com/carlcraignet</url>
+         <url>http://myspace.com/planetecom</url>
+         <url>http://myspace.com/planetedetroit</url>
+         <url>http://soundcloud.com/planetedetroit</url>
+         <url>http://twitter.com/planetedetroit</url>
+         <url>http://vimeo.com/user1265384</url>
+         <url>http://en.wikipedia.org/wiki/Planet_E_Communications</url>
+         <url>http://www.youtube.com/user/planetedetroit</url>
+      </urls>
+   </label>
+   <label>
+      <id>2</id>
+      <name>Earthtones Recordings</name>
+      <contactinfo>Seasons Recordings&#xD;
+2236 Pacific Avenue&#xD;
+Suite D&#xD;
+Costa Mesa, CA  92627&#xD;
+&#xD;
+tel: +1.949.574.5255&#xD;
+fax: +1.949.574.0255&#xD;
+&#xD;
+email: jthinnes@seasonsrecordings.com</contactinfo>
+      <profile>California deep house label founded by [a=Jamie Thinnes]. Now defunct and continued as [l=Seasons Recordings].</profile>
+      <data_quality>Correct</data_quality>
+      <urls>
+         <url>http://www.seasonsrecordings.com/</url>
+      </urls>
+   </label>
+   <label>
+      <images>
+         <image type="primary" uri="" uri150="" width="600" height="152" />
+         <image type="secondary" uri="" uri150="" width="600" height="152" />
+      </images>
+      <id>3</id>
+      <name>Seasons Recordings</name>
+      <contactinfo>Seasons Recordings&#xD;
+Costa Mesa, CA 92627&#xD;
+&#xD;
+Owner / Jamie Thinnes&#xD;
+&#xD;
+Tel 714-206-6146&#xD;
+&#xD;
+jthinnes@seasonsrecordings.com&#xD;
+info@seasonsrecordings.com</contactinfo>
+      <profile>California deep-house label founded by [a=Jamie Thinnes]. &#xD;
+The first ten records were released on [l=Earthtones Recordings].</profile>
+      <data_quality>Correct</data_quality>
+      <urls>
+         <url>http://www.seasonsrecordings.com</url>
+      </urls>
+   </label>
+   <label>
+      <images>
+         <image type="primary" uri="" uri150="" width="280" height="128" />
+         <image type="secondary" uri="" uri150="" width="277" height="40" />
+         <image type="secondary" uri="" uri150="" width="233" height="344" />
+         <image type="secondary" uri="" uri150="" width="500" height="500" />
+      </images>
+      <id>4</id>
+      <name>Siesta Music</name>
+      <contactinfo>Siesta Records&#xD;
+1913 Via Encantadoras&#xD;
+San Diego, CA 92173&#xD;
+&#xD;
+phone 619.789.7793&#xD;
+&#xD;
+info@siestarecords.com</contactinfo>
+      <data_quality>Needs Vote</data_quality>
+      <urls>
+         <url>www.siestarecords.com</url>
+         <url>http://www.facebook.com/pages/Siesta-Records-Gear/154910143836?sk=app_167097993346860</url>
+         <url>http://soundcloud.com/siestarecords</url>
+         <url>https://twitter.com/siestarecords</url>
+         <url>http://www.myspace.com/siestarecords</url>
+      </urls>
+      <sublabels>
+         <label id="4">Bella Recordings</label>
+         <label id="1">Bluem Recordings</label>
+      </sublabels>
+   </label>
+</labels>

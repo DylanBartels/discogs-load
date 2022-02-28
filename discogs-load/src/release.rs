@@ -3,11 +3,8 @@ use postgres::types::ToSql;
 use quick_xml::events::Event;
 use std::{collections::HashMap, error::Error, str};
 
-use crate::db::{write_releases, DbOpt};
-
-pub trait SqlSerialization {
-    fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)>;
-}
+use crate::db::{write_releases, DbOpt, SqlSerialization};
+use crate::parser::Parser;
 
 #[derive(Clone, Debug)]
 pub struct Release {
@@ -133,12 +130,28 @@ impl<'a> ReleasesParser<'a> {
             release_labels: HashMap::new(),
             current_release_label: ReleaseLabel::new(),
             release_videos: HashMap::new(),
-            pb: ProgressBar::new(14779645), // https://api.discogs.com/  - 14783275
+            pb: ProgressBar::new(14976967), // https://api.discogs.com/
+            db_opts,
+        }
+    }
+}
+
+impl<'a> Parser<'a> for ReleasesParser<'a> {
+    fn new(&self, db_opts: &'a DbOpt) -> Self {
+        ReleasesParser {
+            state: ParserReadState::Release,
+            releases: HashMap::new(),
+            current_release: Release::new(),
+            current_id: 0,
+            release_labels: HashMap::new(),
+            current_release_label: ReleaseLabel::new(),
+            release_videos: HashMap::new(),
+            pb: ProgressBar::new(14976967), // https://api.discogs.com/
             db_opts,
         }
     }
 
-    pub fn process(&mut self, ev: Event) -> Result<(), Box<dyn Error>> {
+    fn process(&mut self, ev: Event) -> Result<(), Box<dyn Error>> {
         self.state = match self.state {
             ParserReadState::Release => {
                 match ev {
