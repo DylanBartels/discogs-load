@@ -51,7 +51,7 @@ Download the releases data dump [here](http://www.discogs.com/data/), and run th
 
 ```
 docker-compose up -d postgres
-./discogs-load-aarch64-apple-darwin discogs_20211201_releases.xml.gz
+./discogs-load-aarch64-apple-darwin discogs_20211201_releases.xml.gz discogs_20220201_labels.xml.gz
 ```
 
 ## Tests
@@ -60,13 +60,13 @@ If you don't want to run the huge releases file, it is possible to run a smaller
 
 ```
 docker-compose up -d postgres
-cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
+cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz discogs-load/test_data/artists.xml.gz
 ```
 
 And do a small manual test:
 
 ```
-docker exec -it discogs-load_postgres_1 /bin/bash
+docker exec -it discogs-load-postgres-1 /bin/bash
 psql -U dev discogs
 select * from release;
 ```

@@ -16,8 +16,8 @@ const BUF_SIZE: usize = 4096; // 4kb at once
 #[derive(StructOpt, Debug)]
 #[structopt(name = "discogs-load")]
 struct Opt {
-    /// Path to the releases file, still compressed
-    #[structopt(name = "FILE", parse(from_os_str))]
+    /// Path to one or more discogs monthly data dump files, still compressed
+    #[structopt(name = "FILE(S)", parse(from_os_str))]
     files: Vec<PathBuf>,
 
     // DB related arguments
@@ -46,7 +46,7 @@ fn read_files(opt: &Opt) -> Result<(), Box<dyn Error>> {
         let mut xmlfile = Reader::from_reader(xmlfile);
         let mut buf = Vec::with_capacity(BUF_SIZE);
 
-        // Parse fileinput on type
+        // Parse fileinput on type (label/release/artist)
         let mut parser: Box<dyn parser::Parser> = loop {
             if let Event::Start(ref e) = xmlfile.read_event(&mut buf)? {
                 match e.name() {
