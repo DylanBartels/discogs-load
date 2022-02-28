@@ -25,10 +25,10 @@ The binary needs to be made executable after downloading:
 $ gunzip discogs-load-aarch64-apple-darwin.gz
 $ chmod +x discogs-load-aarch64-apple-darwin
 $ ./discogs-load-aarch64-apple-darwin --help
-discogs-load 0.1.0
+discogs-load 0.1.1
 
 USAGE:
-    discogs-load [OPTIONS] [FILE]...
+    discogs-load [OPTIONS] [FILE(S)]...
 
 FLAGS:
     -h, --help       Prints help information
@@ -42,7 +42,7 @@ OPTIONS:
         --db-user <db-user>            Database user [default: dev]
 
 ARGS:
-    <FILE>...    Path to the releases file, still compressed
+    <FILE(S)>...    Path to one or more discogs monthly data dump files, still compressed
 ```
 
 ## Usage
