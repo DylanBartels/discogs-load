@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS release_label;
 DROP TABLE IF EXISTS release_video;
 
 CREATE TABLE release (
-    id serial primary key,
+    id int NOT NULL,
     status text,
     title text,
     country text,
@@ -16,13 +16,16 @@ CREATE TABLE release (
 );
 
 CREATE TABLE release_label (
-    id serial primary key,
+    id serial,
+    release_id int NOT NULL,
+    label_id int,
     label text,
     catno text
 );
 
 CREATE TABLE release_video (
-    id serial primary key,
+    id serial,
+    release_id int NOT NULL,
     duration int,
     src text,
     title text

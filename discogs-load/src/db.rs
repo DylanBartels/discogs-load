@@ -89,12 +89,13 @@ impl Db {
     fn write_release_rows(&mut self, data: &HashMap<i32, Release>) -> Result<()> {
         let insert = InsertCommand::new(
             "release",
-            "(status, title, country, released, notes, genres, styles, master_id, data_quality)",
+            "(id, status, title, country, released, notes, genres, styles, master_id, data_quality)",
         )?;
         insert.execute(
             &mut self.db_client,
             data,
             &[
+                Type::INT4,
                 Type::TEXT,
                 Type::TEXT,
                 Type::TEXT,
@@ -110,17 +111,17 @@ impl Db {
     }
 
     fn write_release_labels_rows(&mut self, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
-        let insert = InsertCommand::new("release_label", "(label, catno)")?;
-        insert.execute(&mut self.db_client, data, &[Type::TEXT, Type::TEXT])?;
+        let insert = InsertCommand::new("release_label", "(release_id, label, catno, label_id)")?;
+        insert.execute(&mut self.db_client, data, &[Type::INT4, Type::TEXT, Type::TEXT, Type::INT4])?;
         Ok(())
     }
 
     fn write_release_videos_rows(&mut self, data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
-        let insert = InsertCommand::new("release_video", "(duration, src, title)")?;
+        let insert = InsertCommand::new("release_video", "(release_id, duration, src, title)")?;
         insert.execute(
             &mut self.db_client,
             data,
-            &[Type::INT4, Type::TEXT, Type::TEXT],
+            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT],
         )?;
         Ok(())
     }

@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS artist;
 
 CREATE TABLE artist (
-    id serial primary key,
+    id int not null,
     name text,
     real_name text,
     profile text,
