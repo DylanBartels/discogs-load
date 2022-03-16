@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS release;
-DROP TABLE IF EXISTS release_label;
-DROP TABLE IF EXISTS release_video;
+DROP TABLE IF EXISTS release CASCADE;
+DROP TABLE IF EXISTS release_label CASCADE;
+DROP TABLE IF EXISTS release_video CASCADE;
 
 CREATE TABLE release (
     id int NOT NULL,

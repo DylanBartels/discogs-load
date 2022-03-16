@@ -94,7 +94,9 @@ fn read_files(opt: &Opt) -> Result<(), Box<dyn Error>> {
         }
     }
 
-    // db::indexes(&opt.dbopts)?;
+    if opt.dbopts.create_indexes {
+        db::indexes(&opt.dbopts, "sql/indexes.sql")?;
+    }
 
     Ok(())
 }

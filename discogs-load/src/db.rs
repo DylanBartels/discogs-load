@@ -11,6 +11,9 @@ use crate::release::{Release, ReleaseLabel, ReleaseVideo};
 
 #[derive(Debug, Clone, StructOpt)]
 pub struct DbOpt {
+    /// Creates indexes
+    #[structopt(long = "create-indexes")]
+    pub create_indexes: bool,
     /// Number of rows per insert
     #[structopt(long = "batch-size", default_value = "10000")]
     pub batch_size: usize,
@@ -34,17 +37,19 @@ pub trait SqlSerialization {
 
 /// Initialize schema and close connection.
 pub fn init(db_opts: &DbOpt, schema_path: &str) -> Result<()> {
+    info!("Creating the tables.");
     let db = Db::connect(db_opts);
-    Db::create_schema(&mut db?, schema_path)?;
+    Db::execute_file(&mut db?, schema_path)?;
     Ok(())
 }
 
-// /// Initialize indexes and close connection.
-// pub fn indexes(opts: &DbOpt) -> Result<()> {
-//     let db = Db::connect(opts);
-//     Db::create_indexes(&mut db?)?;
-//     Ok(())
-// }
+/// Initialize indexes and close connection.
+pub fn indexes(opts: &DbOpt, file_path: &str) -> Result<()> {
+    info!("Creating the indexes.");
+    let db = Db::connect(opts);
+    Db::execute_file(&mut db?, file_path)?;
+    Ok(())
+}
 
 pub fn write_releases(
     db_opts: &DbOpt,
@@ -169,19 +174,11 @@ impl Db {
         Ok(())
     }
 
-    fn create_schema(&mut self, schema_path: &str) -> Result<()> {
-        info!("Creating the tables.");
+    fn execute_file(&mut self, schema_path: &str) -> Result<()> {
         let tables_structure = fs::read_to_string(schema_path).unwrap();
         self.db_client.batch_execute(&tables_structure).unwrap();
         Ok(())
     }
-
-    // fn create_indexes(&mut self) -> Result<()> {
-    //     info!("Creating the indexes.");
-    //     let tables_structure = fs::read_to_string("sql/indexes/release.sql").unwrap();
-    //     self.db_client.batch_execute(&tables_structure).unwrap();
-    //     Ok(())
-    // }
 }
 
 struct InsertCommand {
