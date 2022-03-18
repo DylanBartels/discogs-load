@@ -8,6 +8,7 @@ use crate::parser::Parser;
 
 #[derive(Clone, Debug)]
 pub struct Label {
+    pub id: i32,
     pub name: String,
     pub contactinfo: String,
     pub profile: String,
@@ -20,6 +21,7 @@ pub struct Label {
 impl SqlSerialization for Label {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
         let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
+            &self.id,
             &self.name,
             &self.contactinfo,
             &self.profile,
@@ -35,6 +37,7 @@ impl SqlSerialization for Label {
 impl Label {
     pub fn new() -> Self {
         Label {
+            id: 0,
             name: String::new(),
             contactinfo: String::new(),
             profile: String::new(),
@@ -65,7 +68,6 @@ pub struct LabelsParser<'a> {
     state: ParserState,
     labels: HashMap<i32, Label>,
     current_label: Label,
-    current_id: i32,
     pb: ProgressBar,
     db_opts: &'a DbOpt,
 }
@@ -76,7 +78,6 @@ impl<'a> LabelsParser<'a> {
             state: ParserState::ReadLabel,
             labels: HashMap::new(),
             current_label: Label::new(),
-            current_id: 0,
             pb: ProgressBar::new(1821993),
             db_opts,
         }
@@ -89,7 +90,6 @@ impl<'a> Parser<'a> for LabelsParser<'a> {
             state: ParserState::ReadLabel,
             labels: HashMap::new(),
             current_label: Label::new(),
-            current_id: 0,
             pb: ProgressBar::new(1821993),
             db_opts,
         }
@@ -118,7 +118,7 @@ impl<'a> Parser<'a> for LabelsParser<'a> {
 
                     Event::End(e) if e.local_name() == b"label" => {
                         self.labels
-                            .entry(self.current_id)
+                            .entry(self.current_label.id)
                             .or_insert(self.current_label.clone());
                         if self.labels.len() >= self.db_opts.batch_size {
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
@@ -141,7 +141,7 @@ impl<'a> Parser<'a> for LabelsParser<'a> {
 
             ParserState::ReadId => match ev {
                 Event::Text(e) => {
-                    self.current_id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
+                    self.current_label.id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
                     ParserState::ReadId
                 }
 

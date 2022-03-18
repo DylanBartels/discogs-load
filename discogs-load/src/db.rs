@@ -134,12 +134,13 @@ impl Db {
     fn write_label_rows(&mut self, data: &HashMap<i32, Label>) -> Result<()> {
         let insert = InsertCommand::new(
             "label",
-            "(name, contactinfo, profile, parent_label, sublabels, urls, data_quality)",
+            "(id, name, contactinfo, profile, parent_label, sublabels, urls, data_quality)",
         )?;
         insert.execute(
             &mut self.db_client,
             data,
             &[
+                Type::INT4,
                 Type::TEXT,
                 Type::TEXT,
                 Type::TEXT,
@@ -155,12 +156,13 @@ impl Db {
     fn write_artist_rows(&mut self, data: &HashMap<i32, Artist>) -> Result<()> {
         let insert = InsertCommand::new(
             "artist",
-            "(name, real_name, profile, data_quality, name_variations, urls, aliases, members)",
+            "(id, name, real_name, profile, data_quality, name_variations, urls, aliases, members)",
         )?;
         insert.execute(
             &mut self.db_client,
             data,
             &[
+                Type::INT4,
                 Type::TEXT,
                 Type::TEXT,
                 Type::TEXT,
