@@ -8,6 +8,7 @@ use crate::parser::Parser;
 
 #[derive(Clone, Debug)]
 pub struct Label {
+    pub id: i32,
     pub name: String,
     pub contactinfo: String,
     pub profile: String,
@@ -20,6 +21,7 @@ pub struct Label {
 impl SqlSerialization for Label {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
         let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
+            &self.id,
             &self.name,
             &self.contactinfo,
             &self.profile,
@@ -35,6 +37,7 @@ impl SqlSerialization for Label {
 impl Label {
     pub fn new() -> Self {
         Label {
+            id: 0,
             name: String::new(),
             contactinfo: String::new(),
             profile: String::new(),
@@ -48,24 +51,23 @@ impl Label {
 
 #[derive(Copy, Clone, Debug)]
 enum ParserState {
-    ReadLabel,
-    ReadName,
-    ReadId,
-    ReadContactinfo,
-    ReadProfile,
-    ReadParentLabel,
-    ReadSublabels,
-    ReadSublabel,
-    ReadUrls,
-    ReadUrl,
-    ReadDataQuality,
+    Label,
+    Name,
+    Id,
+    Contactinfo,
+    Profile,
+    ParentLabel,
+    Sublabels,
+    Sublabel,
+    Urls,
+    Url,
+    DataQuality,
 }
 
 pub struct LabelsParser<'a> {
     state: ParserState,
     labels: HashMap<i32, Label>,
     current_label: Label,
-    current_id: i32,
     pb: ProgressBar,
     db_opts: &'a DbOpt,
 }
@@ -73,10 +75,9 @@ pub struct LabelsParser<'a> {
 impl<'a> LabelsParser<'a> {
     pub fn new(db_opts: &'a DbOpt) -> Self {
         LabelsParser {
-            state: ParserState::ReadLabel,
+            state: ParserState::Label,
             labels: HashMap::new(),
             current_label: Label::new(),
-            current_id: 0,
             pb: ProgressBar::new(1821993),
             db_opts,
         }
@@ -86,39 +87,38 @@ impl<'a> LabelsParser<'a> {
 impl<'a> Parser<'a> for LabelsParser<'a> {
     fn new(&self, db_opts: &'a DbOpt) -> Self {
         LabelsParser {
-            state: ParserState::ReadLabel,
+            state: ParserState::Label,
             labels: HashMap::new(),
             current_label: Label::new(),
-            current_id: 0,
             pb: ProgressBar::new(1821993),
             db_opts,
         }
     }
     fn process(&mut self, ev: Event) -> Result<(), Box<dyn Error>> {
         self.state = match self.state {
-            ParserState::ReadLabel => {
+            ParserState::Label => {
                 match ev {
                     Event::Start(e) if e.local_name() == b"label" => {
                         self.current_label.sublabels = Vec::new();
                         self.current_label.urls = Vec::new();
-                        ParserState::ReadLabel
+                        ParserState::Label
                     }
 
                     Event::Start(e) => match e.local_name() {
-                        b"name" => ParserState::ReadName,
-                        b"id" => ParserState::ReadId,
-                        b"contactinfo" => ParserState::ReadContactinfo,
-                        b"profile" => ParserState::ReadProfile,
-                        b"parent_label" => ParserState::ReadParentLabel,
-                        b"sublabels" => ParserState::ReadSublabels,
-                        b"urls" => ParserState::ReadUrls,
-                        b"data_quality" => ParserState::ReadDataQuality,
-                        _ => ParserState::ReadLabel,
+                        b"name" => ParserState::Name,
+                        b"id" => ParserState::Id,
+                        b"contactinfo" => ParserState::Contactinfo,
+                        b"profile" => ParserState::Profile,
+                        b"parent_label" => ParserState::ParentLabel,
+                        b"sublabels" => ParserState::Sublabels,
+                        b"urls" => ParserState::Urls,
+                        b"data_quality" => ParserState::DataQuality,
+                        _ => ParserState::Label,
                     },
 
                     Event::End(e) if e.local_name() == b"label" => {
                         self.labels
-                            .entry(self.current_id)
+                            .entry(self.current_label.id)
                             .or_insert(self.current_label.clone());
                         if self.labels.len() >= self.db_opts.batch_size {
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
@@ -126,121 +126,121 @@ impl<'a> Parser<'a> for LabelsParser<'a> {
                             self.labels = HashMap::new();
                         }
                         self.pb.inc(1);
-                        ParserState::ReadLabel
+                        ParserState::Label
                     }
 
                     Event::End(e) if e.local_name() == b"labels" => {
                         // write to db remainder of labels
                         write_labels(self.db_opts, &self.labels)?;
-                        ParserState::ReadLabel
+                        ParserState::Label
                     }
 
-                    _ => ParserState::ReadLabel,
+                    _ => ParserState::Label,
                 }
             }
 
-            ParserState::ReadId => match ev {
+            ParserState::Id => match ev {
                 Event::Text(e) => {
-                    self.current_id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadId
+                    self.current_label.id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
+                    ParserState::Id
                 }
 
-                Event::End(e) if e.local_name() == b"id" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"id" => ParserState::Label,
 
-                _ => ParserState::ReadId,
+                _ => ParserState::Id,
             },
 
-            ParserState::ReadName => match ev {
+            ParserState::Name => match ev {
                 Event::Text(e) => {
                     self.current_label.name = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadName
+                    ParserState::Name
                 }
 
-                Event::End(e) if e.local_name() == b"name" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"name" => ParserState::Label,
 
-                _ => ParserState::ReadName,
+                _ => ParserState::Name,
             },
 
-            ParserState::ReadContactinfo => match ev {
+            ParserState::Contactinfo => match ev {
                 Event::Text(e) => {
                     self.current_label.contactinfo = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadContactinfo
+                    ParserState::Contactinfo
                 }
 
-                Event::End(e) if e.local_name() == b"contactinfo" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"contactinfo" => ParserState::Label,
 
-                _ => ParserState::ReadContactinfo,
+                _ => ParserState::Contactinfo,
             },
 
-            ParserState::ReadProfile => match ev {
+            ParserState::Profile => match ev {
                 Event::Text(e) => {
                     self.current_label.profile = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadProfile
+                    ParserState::Profile
                 }
 
-                Event::End(e) if e.local_name() == b"profile" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"profile" => ParserState::Label,
 
-                _ => ParserState::ReadProfile,
+                _ => ParserState::Profile,
             },
 
-            ParserState::ReadParentLabel => match ev {
+            ParserState::ParentLabel => match ev {
                 Event::Text(e) => {
                     self.current_label.parent_label = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadParentLabel
+                    ParserState::ParentLabel
                 }
 
-                Event::End(e) if e.local_name() == b"parent_label" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"parent_label" => ParserState::Label,
 
-                _ => ParserState::ReadParentLabel,
+                _ => ParserState::ParentLabel,
             },
 
-            ParserState::ReadSublabels => match ev {
-                Event::Start(e) if e.local_name() == b"label" => ParserState::ReadSublabel,
+            ParserState::Sublabels => match ev {
+                Event::Start(e) if e.local_name() == b"label" => ParserState::Sublabel,
 
-                Event::End(e) if e.local_name() == b"sublabels" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"sublabels" => ParserState::Label,
 
-                _ => ParserState::ReadSublabels,
+                _ => ParserState::Sublabels,
             },
 
-            ParserState::ReadSublabel => match ev {
+            ParserState::Sublabel => match ev {
                 Event::Text(e) => {
                     self.current_label
                         .sublabels
                         .extend(str::parse(str::from_utf8(&e.unescaped()?)?));
-                    ParserState::ReadSublabels
+                    ParserState::Sublabels
                 }
 
-                _ => ParserState::ReadSublabels,
+                _ => ParserState::Sublabels,
             },
 
-            ParserState::ReadUrls => match ev {
-                Event::Start(e) if e.local_name() == b"url" => ParserState::ReadUrl,
+            ParserState::Urls => match ev {
+                Event::Start(e) if e.local_name() == b"url" => ParserState::Url,
 
-                Event::End(e) if e.local_name() == b"urls" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"urls" => ParserState::Label,
 
-                _ => ParserState::ReadUrls,
+                _ => ParserState::Urls,
             },
 
-            ParserState::ReadUrl => match ev {
+            ParserState::Url => match ev {
                 Event::Text(e) => {
                     self.current_label
                         .urls
                         .extend(str::parse(str::from_utf8(&e.unescaped()?)?));
-                    ParserState::ReadUrls
+                    ParserState::Urls
                 }
 
-                _ => ParserState::ReadUrls,
+                _ => ParserState::Urls,
             },
 
-            ParserState::ReadDataQuality => match ev {
+            ParserState::DataQuality => match ev {
                 Event::Text(e) => {
                     self.current_label.data_quality = str::parse(str::from_utf8(&e.unescaped()?)?)?;
-                    ParserState::ReadDataQuality
+                    ParserState::DataQuality
                 }
 
-                Event::End(e) if e.local_name() == b"data_quality" => ParserState::ReadLabel,
+                Event::End(e) if e.local_name() == b"data_quality" => ParserState::Label,
 
-                _ => ParserState::ReadDataQuality,
+                _ => ParserState::DataQuality,
             },
         };
 

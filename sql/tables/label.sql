@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS label;
 
 CREATE TABLE label (
-    id serial primary key,
+    id int not null,
 	name text,
 	contactinfo text,
 	profile text,

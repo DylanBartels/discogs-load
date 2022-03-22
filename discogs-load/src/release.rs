@@ -8,6 +8,7 @@ use crate::parser::Parser;
 
 #[derive(Clone, Debug)]
 pub struct Release {
+    pub id: i32,
     pub status: String,
     pub title: String,
     pub country: String,
@@ -22,6 +23,7 @@ pub struct Release {
 impl SqlSerialization for Release {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
         let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
+            &self.id,
             &self.status,
             &self.title,
             &self.country,
@@ -38,19 +40,23 @@ impl SqlSerialization for Release {
 
 #[derive(Clone, Debug)]
 pub struct ReleaseLabel {
+    pub release_id: i32,
     pub label: String,
     pub catno: String,
+    pub label_id: i32,
 }
 
 impl SqlSerialization for ReleaseLabel {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
-        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.label, &self.catno];
+        let row: Vec<&'_ (dyn ToSql + Sync)> =
+            vec![&self.release_id, &self.label, &self.catno, &self.label_id];
         row
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct ReleaseVideo {
+    pub release_id: i32,
     pub duration: i32,
     pub src: String,
     pub title: String,
@@ -58,7 +64,8 @@ pub struct ReleaseVideo {
 
 impl SqlSerialization for ReleaseVideo {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
-        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.duration, &self.src, &self.title];
+        let row: Vec<&'_ (dyn ToSql + Sync)> =
+            vec![&self.release_id, &self.duration, &self.src, &self.title];
         row
     }
 }
@@ -66,6 +73,7 @@ impl SqlSerialization for ReleaseVideo {
 impl Release {
     pub fn new() -> Self {
         Release {
+            id: 0,
             status: String::new(),
             title: String::new(),
             country: String::new(),
@@ -75,15 +83,6 @@ impl Release {
             styles: Vec::new(),
             master_id: 0,
             data_quality: String::new(),
-        }
-    }
-}
-
-impl ReleaseLabel {
-    pub fn new() -> Self {
-        ReleaseLabel {
-            label: String::new(),
-            catno: String::new(),
         }
     }
 }
@@ -114,7 +113,7 @@ pub struct ReleasesParser<'a> {
     current_release: Release,
     current_id: i32,
     release_labels: HashMap<i32, ReleaseLabel>,
-    current_release_label: ReleaseLabel,
+    current_video_id: i32,
     release_videos: HashMap<i32, ReleaseVideo>,
     pb: ProgressBar,
     db_opts: &'a DbOpt,
@@ -128,7 +127,7 @@ impl<'a> ReleasesParser<'a> {
             current_release: Release::new(),
             current_id: 0,
             release_labels: HashMap::new(),
-            current_release_label: ReleaseLabel::new(),
+            current_video_id: 0,
             release_videos: HashMap::new(),
             pb: ProgressBar::new(14976967), // https://api.discogs.com/
             db_opts,
@@ -144,7 +143,7 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
             current_release: Release::new(),
             current_id: 0,
             release_labels: HashMap::new(),
-            current_release_label: ReleaseLabel::new(),
+            current_video_id: 0,
             release_videos: HashMap::new(),
             pb: ProgressBar::new(14976967), // https://api.discogs.com/
             db_opts,
@@ -162,6 +161,7 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
                         self.current_id = str::parse(str::from_utf8(
                             &e.attributes().next().unwrap()?.unescaped_value()?,
                         )?)?;
+                        self.current_release.id = self.current_id;
                         self.current_release.genres = Vec::new();
                         self.current_release.styles = Vec::new();
                         ParserReadState::Release
@@ -324,18 +324,21 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
 
             ParserReadState::Labels => match ev {
                 Event::Empty(e) => {
-                    self.current_release_label.label = str::parse(str::from_utf8(
-                        &e.attributes().next().unwrap()?.unescaped_value()?,
-                    )?)?;
-                    self.current_release_label.catno = str::parse(str::from_utf8(
-                        &e.attributes().nth(1).unwrap()?.unescaped_value()?,
-                    )?)?;
                     let label_id = str::parse(str::from_utf8(
                         &e.attributes().nth(2).unwrap()?.unescaped_value()?,
                     )?)?;
-                    self.release_labels
-                        .entry(label_id)
-                        .or_insert(self.current_release_label.clone());
+                    self.release_labels.entry(label_id).or_insert(ReleaseLabel {
+                        release_id: self.current_release.id,
+                        label: str::parse(str::from_utf8(
+                            &e.attributes().next().unwrap()?.unescaped_value()?,
+                        )?)?,
+                        catno: str::parse(str::from_utf8(
+                            &e.attributes().nth(1).unwrap()?.unescaped_value()?,
+                        )?)?,
+                        label_id: str::parse(str::from_utf8(
+                            &e.attributes().nth(2).unwrap()?.unescaped_value()?,
+                        )?)?,
+                    });
                     ParserReadState::Labels
                 }
 
@@ -347,8 +350,9 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
             ParserReadState::Videos => match ev {
                 Event::Start(e) if e.local_name() == b"video" => {
                     self.release_videos
-                        .entry(self.current_id)
+                        .entry(self.current_video_id)
                         .or_insert(ReleaseVideo {
+                            release_id: self.current_release.id,
                             duration: str::parse(str::from_utf8(
                                 &e.attributes().nth(1).unwrap()?.unescaped_value()?,
                             )?)?,
@@ -357,6 +361,7 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
                             )?)?,
                             title: String::new(),
                         });
+                    self.current_video_id += 1;
                     ParserReadState::Videos
                 }
 

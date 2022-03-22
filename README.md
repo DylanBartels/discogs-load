@@ -31,8 +31,9 @@ USAGE:
     discogs-load [OPTIONS] [FILE(S)]...
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    --create-indexes    Creates indexes
+    -h, --help          Prints help information
+    -V, --version       Prints version information
 
 OPTIONS:
         --batch-size <batch-size>      Number of rows per insert [default: 10000]
@@ -47,12 +48,22 @@ ARGS:
 
 ## Usage
 
-Download the releases data dump [here](http://www.discogs.com/data/), and run the binary with the path to the gz compressed file as only argument. For the example below we'll use a dockerized postgres instance.
+Download the releases data dump [here](http://www.discogs.com/data/), and run the binary with the path to the gz compressed file(s) as only argument. For the example below we'll use a dockerized postgres instance.
 
 ```
 docker-compose up -d postgres
 ./discogs-load-aarch64-apple-darwin discogs_20211201_releases.xml.gz discogs_20220201_labels.xml.gz
 ```
+
+It is possible to afterwards run the innitalization of the project defined indexes.
+
+```
+./discogs-load-aarch64-apple-darwin --create-indexes
+```
+
+## Datamodel
+
+![Datamodel](imgs/datamodel.png)
 
 ## Tests
 
@@ -70,8 +81,3 @@ docker exec -it discogs-load-postgres-1 /bin/bash
 psql -U dev discogs
 select * from release;
 ```
-
-## Contributing/Remaining todo
-
-- Create a parser for the masters dataset
-- Create a proper relational database schema

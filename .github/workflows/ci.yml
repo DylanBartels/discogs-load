@@ -21,7 +21,10 @@ jobs:
         run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
       
       - name: Run labels
-        run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
+        run: cargo run --bin discogs-load discogs-load/test_data/labels.xml.gz
       
       - name: Run artists
-        run: cargo run --bin discogs-load discogs-load/test_data/releases.xml.gz
+        run: cargo run --bin discogs-load discogs-load/test_data/artists.xml.gz
+
+      - name: Run masters
+        run: cargo run --bin discogs-load discogs-load/test_data/masters.xml.gz

@@ -8,6 +8,7 @@ use crate::parser::Parser;
 
 #[derive(Clone, Debug)]
 pub struct Artist {
+    pub id: i32,
     pub name: String,
     pub real_name: String,
     pub profile: String,
@@ -21,6 +22,7 @@ pub struct Artist {
 impl SqlSerialization for Artist {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
         let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
+            &self.id,
             &self.name,
             &self.real_name,
             &self.profile,
@@ -37,6 +39,7 @@ impl SqlSerialization for Artist {
 impl Artist {
     pub fn new() -> Self {
         Artist {
+            id: 0,
             name: String::new(),
             real_name: String::new(),
             profile: String::new(),
@@ -70,7 +73,6 @@ pub struct ArtistsParser<'a> {
     state: ParserState,
     artists: HashMap<i32, Artist>,
     current_artist: Artist,
-    current_id: i32,
     pb: ProgressBar,
     db_opts: &'a DbOpt,
 }
@@ -81,7 +83,6 @@ impl<'a> ArtistsParser<'a> {
             state: ParserState::Artist,
             artists: HashMap::new(),
             current_artist: Artist::new(),
-            current_id: 0,
             pb: ProgressBar::new(7993954),
             db_opts,
         }
@@ -94,7 +95,6 @@ impl<'a> Parser<'a> for ArtistsParser<'a> {
             state: ParserState::Artist,
             artists: HashMap::new(),
             current_artist: Artist::new(),
-            current_id: 0,
             pb: ProgressBar::new(7993954),
             db_opts,
         }
@@ -126,7 +126,7 @@ impl<'a> Parser<'a> for ArtistsParser<'a> {
 
                     Event::End(e) if e.local_name() == b"artist" => {
                         self.artists
-                            .entry(self.current_id)
+                            .entry(self.current_artist.id)
                             .or_insert(self.current_artist.clone());
                         if self.artists.len() >= self.db_opts.batch_size {
                             // use drain? https://doc.rust-lang.org/std/collections/struct.HashMap.html#examples-13
@@ -149,7 +149,7 @@ impl<'a> Parser<'a> for ArtistsParser<'a> {
 
             ParserState::Id => match ev {
                 Event::Text(e) => {
-                    self.current_id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
+                    self.current_artist.id = str::parse(str::from_utf8(&e.unescaped()?)?)?;
                     ParserState::Id
                 }
 
