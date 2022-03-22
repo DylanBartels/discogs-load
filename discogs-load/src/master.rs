@@ -55,18 +55,13 @@ pub struct MasterArtist {
     pub master_id: i32,
     pub name: String,
     pub anv: String,
-    pub role: String
+    pub role: String,
 }
 
 impl SqlSerialization for MasterArtist {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
-        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![
-            &self.id,
-            &self.master_id,
-            &self.name,
-            &self.anv,
-            &self.role,
-        ];
+        let row: Vec<&'_ (dyn ToSql + Sync)> =
+            vec![&self.id, &self.master_id, &self.name, &self.anv, &self.role];
         row
     }
 }
@@ -78,7 +73,7 @@ impl MasterArtist {
             master_id: 0,
             name: String::new(),
             anv: String::new(),
-            role: String::new()
+            role: String::new(),
         }
     }
 }
@@ -95,7 +90,7 @@ enum ParserReadState {
     ArtistId,
     ArtistName,
     ArtistAnv,
-    ArtistRole
+    ArtistRole,
 }
 
 pub struct MastersParser<'a> {
@@ -198,12 +193,12 @@ impl<'a> Parser<'a> for MastersParser<'a> {
                         self.current_artist = MasterArtist::new();
                         self.current_artist.master_id = self.current_master.id;
                         ParserReadState::Artists
-                    },
+                    }
                     b"id" => ParserReadState::ArtistId,
                     b"name" => ParserReadState::ArtistName,
                     b"anv" => ParserReadState::ArtistAnv,
                     b"role" => ParserReadState::ArtistRole,
-                    _ => ParserReadState::Artists
+                    _ => ParserReadState::Artists,
                 },
 
                 Event::End(e) => match e.local_name() {
@@ -213,9 +208,9 @@ impl<'a> Parser<'a> for MastersParser<'a> {
                             .or_insert(self.current_artist.clone());
                         self.current_master_id += 1;
                         ParserReadState::Artists
-                    },
+                    }
                     b"artists" => ParserReadState::Master,
-                    _ => ParserReadState::Artists
+                    _ => ParserReadState::Artists,
                 },
 
                 _ => ParserReadState::Artists,
@@ -278,7 +273,8 @@ impl<'a> Parser<'a> for MastersParser<'a> {
 
             ParserReadState::DataQuality => match ev {
                 Event::Text(e) => {
-                    self.current_master.data_quality = str::parse(str::from_utf8(&e.unescaped()?)?)?;
+                    self.current_master.data_quality =
+                        str::parse(str::from_utf8(&e.unescaped()?)?)?;
                     ParserReadState::DataQuality
                 }
 

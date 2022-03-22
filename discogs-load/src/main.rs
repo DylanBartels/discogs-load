@@ -8,9 +8,9 @@ use structopt::StructOpt;
 mod artist;
 mod db;
 mod label;
+mod master;
 mod parser;
 mod release;
-mod master;
 
 const BUF_SIZE: usize = 4096; // 4kb at once
 

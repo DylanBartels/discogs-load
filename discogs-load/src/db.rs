@@ -7,8 +7,8 @@ use structopt::StructOpt;
 
 use crate::artist::Artist;
 use crate::label::Label;
-use crate::release::{Release, ReleaseLabel, ReleaseVideo};
 use crate::master::{Master, MasterArtist};
+use crate::release::{Release, ReleaseLabel, ReleaseVideo};
 
 #[derive(Debug, Clone, StructOpt)]
 pub struct DbOpt {
@@ -77,7 +77,11 @@ pub fn write_artists(db_opts: &DbOpt, artists: &HashMap<i32, Artist>) -> Result<
     Ok(())
 }
 
-pub fn write_masters(db_opts: &DbOpt, masters: &HashMap<i32, Master>, masters_artists: &HashMap<i32, MasterArtist>) -> Result<()> {
+pub fn write_masters(
+    db_opts: &DbOpt,
+    masters: &HashMap<i32, Master>,
+    masters_artists: &HashMap<i32, MasterArtist>,
+) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
     Db::write_master_rows(&mut db, masters)?;
     Db::write_master_artists_rows(&mut db, masters_artists)?;
@@ -125,7 +129,11 @@ impl Db {
 
     fn write_release_labels_rows(&mut self, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
         let insert = InsertCommand::new("release_label", "(release_id, label, catno, label_id)")?;
-        insert.execute(&mut self.db_client, data, &[Type::INT4, Type::TEXT, Type::TEXT, Type::INT4])?;
+        insert.execute(
+            &mut self.db_client,
+            data,
+            &[Type::INT4, Type::TEXT, Type::TEXT, Type::INT4],
+        )?;
         Ok(())
     }
 
@@ -207,20 +215,12 @@ impl Db {
     }
 
     fn write_master_artists_rows(&mut self, data: &HashMap<i32, MasterArtist>) -> Result<()> {
-        let insert = InsertCommand::new(
-            "master_artist",
-            "(artist_id, master_id, name, anv, role)",
-        )?;
+        let insert =
+            InsertCommand::new("master_artist", "(artist_id, master_id, name, anv, role)")?;
         insert.execute(
             &mut self.db_client,
             data,
-            &[
-                Type::INT4,
-                Type::INT4,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-            ],
+            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT, Type::TEXT],
         )?;
         Ok(())
     }

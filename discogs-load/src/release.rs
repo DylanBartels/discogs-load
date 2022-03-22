@@ -43,12 +43,13 @@ pub struct ReleaseLabel {
     pub release_id: i32,
     pub label: String,
     pub catno: String,
-    pub label_id: i32
+    pub label_id: i32,
 }
 
 impl SqlSerialization for ReleaseLabel {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
-        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.release_id, &self.label, &self.catno, &self.label_id];
+        let row: Vec<&'_ (dyn ToSql + Sync)> =
+            vec![&self.release_id, &self.label, &self.catno, &self.label_id];
         row
     }
 }
@@ -63,7 +64,8 @@ pub struct ReleaseVideo {
 
 impl SqlSerialization for ReleaseVideo {
     fn to_sql(&self) -> Vec<&'_ (dyn ToSql + Sync)> {
-        let row: Vec<&'_ (dyn ToSql + Sync)> = vec![&self.release_id, &self.duration, &self.src, &self.title];
+        let row: Vec<&'_ (dyn ToSql + Sync)> =
+            vec![&self.release_id, &self.duration, &self.src, &self.title];
         row
     }
 }
@@ -325,16 +327,18 @@ impl<'a> Parser<'a> for ReleasesParser<'a> {
                     let label_id = str::parse(str::from_utf8(
                         &e.attributes().nth(2).unwrap()?.unescaped_value()?,
                     )?)?;
-                    self.release_labels
-                        .entry(label_id)
-                        .or_insert(ReleaseLabel {
-                            release_id: self.current_release.id,
-                            label: str::parse(str::from_utf8(&e.attributes().next().unwrap()?.unescaped_value()?)?)?,
-                            catno: str::parse(str::from_utf8(&e.attributes().nth(1).unwrap()?.unescaped_value()?)?)?,
-                            label_id: str::parse(str::from_utf8(
-                                &e.attributes().nth(2).unwrap()?.unescaped_value()?,
-                            )?)?
-                        });
+                    self.release_labels.entry(label_id).or_insert(ReleaseLabel {
+                        release_id: self.current_release.id,
+                        label: str::parse(str::from_utf8(
+                            &e.attributes().next().unwrap()?.unescaped_value()?,
+                        )?)?,
+                        catno: str::parse(str::from_utf8(
+                            &e.attributes().nth(1).unwrap()?.unescaped_value()?,
+                        )?)?,
+                        label_id: str::parse(str::from_utf8(
+                            &e.attributes().nth(2).unwrap()?.unescaped_value()?,
+                        )?)?,
+                    });
                     ParserReadState::Labels
                 }
 
