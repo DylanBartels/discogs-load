@@ -10,6 +10,7 @@ mod db;
 mod label;
 mod parser;
 mod release;
+mod master;
 
 const BUF_SIZE: usize = 4096; // 4kb at once
 
@@ -68,6 +69,13 @@ fn read_files(opt: &Opt) -> Result<(), Box<dyn Error>> {
                         db::init(&opt.dbopts, "sql/tables/artist.sql")?;
                         break Box::new(parser::Parser::new(
                             &artist::ArtistsParser::new(&opt.dbopts),
+                            &opt.dbopts,
+                        ));
+                    }
+                    b"masters" => {
+                        db::init(&opt.dbopts, "sql/tables/master.sql")?;
+                        break Box::new(parser::Parser::new(
+                            &master::MastersParser::new(&opt.dbopts),
                             &opt.dbopts,
                         ));
                     }

@@ -54,6 +54,10 @@ docker-compose up -d postgres
 ./discogs-load-aarch64-apple-darwin discogs_20211201_releases.xml.gz discogs_20220201_labels.xml.gz
 ```
 
+## Datamodel
+
+![Datamodel](imgs/datamodel.png)
+
 ## Tests
 
 If you don't want to run the huge releases file, it is possible to run a smaller example file like so:
