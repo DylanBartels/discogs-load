@@ -1,7 +1,7 @@
 use anyhow::Result;
 use log::info;
-use postgres::types::ToSql;
-use postgres::{binary_copy::BinaryCopyInWriter, types::Type, Client, NoTls};
+use postgres::types::{ToSql, Type};
+use postgres::{binary_copy::BinaryCopyInWriter, Client, NoTls};
 use std::{collections::HashMap, fs};
 use structopt::StructOpt;
 
@@ -59,21 +59,87 @@ pub fn write_releases(
     releases_videos: &HashMap<i32, ReleaseVideo>,
 ) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_release_rows(&mut db, releases)?;
-    Db::write_release_labels_rows(&mut db, releases_labels)?;
-    Db::write_release_videos_rows(&mut db, releases_videos)?;
+    Db::write_rows(&mut db, releases, InsertCommand::new(
+        "release",
+        "(id, status, title, country, released, notes, genres, styles, master_id, data_quality)",
+        &[
+            Type::INT4,
+            Type::TEXT,
+            Type::TEXT,
+            Type::TEXT,
+            Type::TEXT,
+            Type::TEXT,
+            Type::TEXT_ARRAY,
+            Type::TEXT_ARRAY,
+            Type::INT4,
+            Type::TEXT,
+        ],
+    )?)?;
+    Db::write_rows(
+        &mut db,
+        releases_labels,
+        InsertCommand::new(
+            "release_label",
+            "(release_id, label, catno, label_id)",
+            &[Type::INT4, Type::TEXT, Type::TEXT, Type::INT4],
+        )?,
+    )?;
+    Db::write_rows(
+        &mut db,
+        releases_videos,
+        InsertCommand::new(
+            "release_video",
+            "(release_id, duration, src, title)",
+            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT],
+        )?,
+    )?;
     Ok(())
 }
 
 pub fn write_labels(db_opts: &DbOpt, labels: &HashMap<i32, Label>) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_label_rows(&mut db, labels)?;
+    Db::write_rows(
+        &mut db,
+        labels,
+        InsertCommand::new(
+            "label",
+            "(id, name, contactinfo, profile, parent_label, sublabels, urls, data_quality)",
+            &[
+                Type::INT4,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT_ARRAY,
+                Type::TEXT_ARRAY,
+                Type::TEXT,
+            ],
+        )?,
+    )?;
     Ok(())
 }
 
 pub fn write_artists(db_opts: &DbOpt, artists: &HashMap<i32, Artist>) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_artist_rows(&mut db, artists)?;
+    Db::write_rows(
+        &mut db,
+        artists,
+        InsertCommand::new(
+            "artist",
+            "(id, name, real_name, profile, data_quality, name_variations, urls, aliases, members)",
+            &[
+                Type::INT4,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT,
+                Type::TEXT_ARRAY,
+                Type::TEXT_ARRAY,
+                Type::TEXT_ARRAY,
+                Type::TEXT_ARRAY,
+            ],
+        )?,
+    )?;
     Ok(())
 }
 
@@ -83,8 +149,33 @@ pub fn write_masters(
     masters_artists: &HashMap<i32, MasterArtist>,
 ) -> Result<()> {
     let mut db = Db::connect(db_opts)?;
-    Db::write_master_rows(&mut db, masters)?;
-    Db::write_master_artists_rows(&mut db, masters_artists)?;
+    Db::write_rows(
+        &mut db,
+        masters,
+        InsertCommand::new(
+            "master",
+            "(id, title, release_id, year, notes, genres, styles, data_quality)",
+            &[
+                Type::INT4,
+                Type::TEXT,
+                Type::INT4,
+                Type::INT4,
+                Type::TEXT,
+                Type::TEXT_ARRAY,
+                Type::TEXT_ARRAY,
+                Type::TEXT,
+            ],
+        )?,
+    )?;
+    Db::write_rows(
+        &mut db,
+        masters_artists,
+        InsertCommand::new(
+            "master_artist",
+            "(artist_id, master_id, name, anv, role)",
+            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT, Type::TEXT],
+        )?,
+    )?;
     Ok(())
 }
 
@@ -103,125 +194,12 @@ impl Db {
         Ok(Db { db_client: client })
     }
 
-    fn write_release_rows(&mut self, data: &HashMap<i32, Release>) -> Result<()> {
-        let insert = InsertCommand::new(
-            "release",
-            "(id, status, title, country, released, notes, genres, styles, master_id, data_quality)",
-        )?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[
-                Type::INT4,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-                Type::INT4,
-                Type::TEXT,
-            ],
-        )?;
-        Ok(())
-    }
-
-    fn write_release_labels_rows(&mut self, data: &HashMap<i32, ReleaseLabel>) -> Result<()> {
-        let insert = InsertCommand::new("release_label", "(release_id, label, catno, label_id)")?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[Type::INT4, Type::TEXT, Type::TEXT, Type::INT4],
-        )?;
-        Ok(())
-    }
-
-    fn write_release_videos_rows(&mut self, data: &HashMap<i32, ReleaseVideo>) -> Result<()> {
-        let insert = InsertCommand::new("release_video", "(release_id, duration, src, title)")?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT],
-        )?;
-        Ok(())
-    }
-
-    fn write_label_rows(&mut self, data: &HashMap<i32, Label>) -> Result<()> {
-        let insert = InsertCommand::new(
-            "label",
-            "(id, name, contactinfo, profile, parent_label, sublabels, urls, data_quality)",
-        )?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[
-                Type::INT4,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-                Type::TEXT,
-            ],
-        )?;
-        Ok(())
-    }
-
-    fn write_artist_rows(&mut self, data: &HashMap<i32, Artist>) -> Result<()> {
-        let insert = InsertCommand::new(
-            "artist",
-            "(id, name, real_name, profile, data_quality, name_variations, urls, aliases, members)",
-        )?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[
-                Type::INT4,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-            ],
-        )?;
-        Ok(())
-    }
-
-    fn write_master_rows(&mut self, data: &HashMap<i32, Master>) -> Result<()> {
-        let insert = InsertCommand::new(
-            "master",
-            "(id, title, release_id, year, notes, genres, styles, data_quality)",
-        )?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[
-                Type::INT4,
-                Type::TEXT,
-                Type::INT4,
-                Type::INT4,
-                Type::TEXT,
-                Type::TEXT_ARRAY,
-                Type::TEXT_ARRAY,
-                Type::TEXT,
-            ],
-        )?;
-        Ok(())
-    }
-
-    fn write_master_artists_rows(&mut self, data: &HashMap<i32, MasterArtist>) -> Result<()> {
-        let insert =
-            InsertCommand::new("master_artist", "(artist_id, master_id, name, anv, role)")?;
-        insert.execute(
-            &mut self.db_client,
-            data,
-            &[Type::INT4, Type::INT4, Type::TEXT, Type::TEXT, Type::TEXT],
-        )?;
+    fn write_rows<T: SqlSerialization>(
+        &mut self,
+        data: &HashMap<i32, T>,
+        insert_cmd: InsertCommand,
+    ) -> Result<()> {
+        insert_cmd.execute(&mut self.db_client, data)?;
         Ok(())
     }
 
@@ -232,27 +210,25 @@ impl Db {
     }
 }
 
-struct InsertCommand {
-    // Todo: get type from db?
-    // https://github.com/sfackler/rust-postgres/issues/862#issuecomment-1014894748
-    // col_types: String,
+struct InsertCommand<'a> {
+    col_types: &'a [Type],
     copy_stm: String,
 }
 
-impl InsertCommand {
-    fn new(table_name: &str, column_name: &str) -> Result<Self> {
+impl<'a> InsertCommand<'a> {
+    fn new(table_name: &str, column_name: &str, col_types: &'a [Type]) -> Result<Self> {
         Ok(Self {
-            // col_types: get_col_types(),
+            col_types,
             copy_stm: get_copy_statement(table_name, column_name),
         })
     }
 
-    fn execute<T>(&self, client: &mut Client, data: &HashMap<i32, T>, types: &[Type]) -> Result<()>
+    fn execute<T>(&self, client: &mut Client, data: &HashMap<i32, T>) -> Result<()>
     where
         T: SqlSerialization,
     {
         let sink = client.copy_in(&self.copy_stm)?;
-        let mut writer = BinaryCopyInWriter::new(sink, types);
+        let mut writer = BinaryCopyInWriter::new(sink, self.col_types);
 
         for values in data.values() {
             writer.write(&values.to_sql())?;
